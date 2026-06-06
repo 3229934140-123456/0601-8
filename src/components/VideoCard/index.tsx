@@ -22,8 +22,21 @@ const VideoCard: React.FC<VideoCardProps> = ({
   const likeVideo = useAppStore(state => state.likeVideo);
   const collectVideo = useAppStore(state => state.collectVideo);
   const videos = useAppStore(state => state.videos);
+  const addRecentView = useAppStore(state => state.addRecentView);
 
   const currentVideo = videos.find(v => v.id === video.id) || video;
+
+  useEffect(() => {
+    if (isActive) {
+      addRecentView(video.id);
+    }
+  }, [isActive, video.id]);
+
+  const challengeTags = currentVideo.challenges?.length
+    ? currentVideo.challenges.map(c => c.tag)
+    : currentVideo.challenge
+      ? [currentVideo.challenge.tag]
+      : [];
 
   const [isFollowed, setIsFollowed] = useState(video.isFollowed);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -259,12 +272,12 @@ const VideoCard: React.FC<VideoCardProps> = ({
         )}
 
         <View className={styles.tagsRow}>
-          {video.tags.map((tag, index) => (
-            <Text key={index} className={styles.tagItem}>#{tag}</Text>
+          {challengeTags.slice(0, 3).map((tag, index) => (
+            <Text key={index} className={styles.tagItem}>{tag}</Text>
           ))}
-          {video.challenge && (
-            <Text className={styles.tagItem}>{video.challenge.tag}</Text>
-          )}
+          {currentVideo.tags && currentVideo.tags.slice(0, 2).map((tag, index) => (
+            <Text key={`tag_${index}`} className={styles.tagItem}>#{tag}</Text>
+          ))}
         </View>
       </View>
     </View>

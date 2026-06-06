@@ -5,6 +5,7 @@ import {
   mockCreatorTasks,
   mockUsers,
   mockShops,
+  mockComments,
 } from '@/data/index';
 import {
   Video,
@@ -12,9 +13,9 @@ import {
   CreatorTask,
   Subtitle,
   Sticker,
-  Challenge,
   Shop,
   User,
+  Comment,
 } from '@/types';
 
 interface AppState {
@@ -26,12 +27,15 @@ interface AppState {
   collectedVideos: string[];
   likedShops: string[];
   collectedShops: string[];
+  recentViewed: string[];
+  videoComments: Record<string, Comment[]>;
 
   addVideo: (video: Video) => void;
   likeVideo: (videoId: string) => void;
   collectVideo: (videoId: string) => void;
   likeShop: (shopId: string) => void;
   collectShop: (shopId: string) => void;
+  addRecentView: (videoId: string) => void;
 
   addDraft: (draft: DraftVideo) => void;
   updateDraft: (id: string, updates: Partial<DraftVideo>) => void;
@@ -40,12 +44,17 @@ interface AppState {
   claimTask: (taskId: string) => void;
   updateTaskProgress: (taskId: string, progress: number) => void;
   completeTask: (taskId: string) => void;
+  getTasksByStatus: (status: 'pending' | 'ongoing' | 'completed') => CreatorTask[];
+
+  addComment: (videoId: string, comment: Comment) => void;
+  getComments: (videoId: string) => Comment[];
 
   getVideosByShop: (shopId: string) => Video[];
   getMyVideos: () => Video[];
   getLikedVideos: () => Video[];
   getCollectedVideos: () => Video[];
   getCollectedShops: () => Shop[];
+  getRecentViewedVideos: () => Video[];
 }
 
 const initialDrafts: DraftVideo[] = mockDrafts.map((d, i) => ({
@@ -57,6 +66,8 @@ const initialDrafts: DraftVideo[] = mockDrafts.map((d, i) => ({
     {
       id: `sub_${d.id}`,
       text: '点击编辑文字',
+      startTime: 0,
+      endTime: 5,
       x: 50,
       y: 70,
       fontSize: 32,
@@ -76,7 +87,13 @@ const initialDrafts: DraftVideo[] = mockDrafts.map((d, i) => ({
   duration: d.duration,
   shopId: mockShops[i % mockShops.length]?.id,
   challengeIds: [],
+  description: '',
 }));
+
+const initialVideoComments: Record<string, Comment[]> = {};
+mockVideos.forEach((v, i) => {
+  initialVideoComments[v.id] = mockComments.slice(0, 3 + i);
+});
 
 export const useAppStore = create<AppState>((set, get) => ({
   videos: mockVideos,
@@ -87,6 +104,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   collectedVideos: mockVideos.filter(v => v.isCollected).map(v => v.id),
   likedShops: [],
   collectedShops: mockShops.slice(0, 2).map(s => s.id),
+  recentViewed: [],
+  videoComments: initialVideoComments,
 
   addVideo: (video) => {
     set(state => ({
@@ -151,6 +170,16 @@ export const useAppStore = create<AppState>((set, get) => ({
     }));
   },
 
+  addRecentView: (videoId) => {
+    set(state => {
+      const filtered = state.recentViewed.filter(id => id !== videoId);
+      return {
+        recentViewed: [videoId, ...filtered].slice(0, 20),
+      };
+    });
+    console.log('[Store] recent view added:', videoId);
+  },
+
   addDraft: (draft) => {
     set(state => ({
       drafts: [draft, ...state.drafts],
@@ -212,6 +241,32 @@ export const useAppStore = create<AppState>((set, get) => ({
     console.log('[Store] task completed:', taskId);
   },
 
+  getTasksByStatus: (status) => {
+    return get().tasks.filter(t => t.status === status);
+  },
+
+  addComment: (videoId, comment) => {
+    set(state => {
+      const existing = state.videoComments[videoId] || [];
+      return {
+        videoComments: {
+          ...state.videoComments,
+          [videoId]: [comment, ...existing],
+        },
+        videos: state.videos.map(v =>
+          v.id === videoId
+            ? { ...v, commentsCount: v.commentsCount + 1 }
+            : v
+        ),
+      };
+    });
+    console.log('[Store] comment added to:', videoId);
+  },
+
+  getComments: (videoId) => {
+    return get().videoComments[videoId] || [];
+  },
+
   getVideosByShop: (shopId) => {
     return get().videos.filter(v => v.shop?.id === shopId);
   },
@@ -233,5 +288,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   getCollectedShops: () => {
     const { collectedShops } = get();
     return mockShops.filter(s => collectedShops.includes(s.id));
+  },
+
+  getRecentViewedVideos: () => {
+    const { recentViewed, videos } = get();
+    return recentViewed
+      .map(id => videos.find(v => v.id === id))
+      .filter(Boolean) as Video[];
   },
 }));

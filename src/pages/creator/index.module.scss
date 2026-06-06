@@ -81,14 +81,19 @@
   padding: $spacing-lg $page-padding 0;
 }
 
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
 .sectionTitle {
   font-size: $font-size-lg;
   font-weight: $font-weight-semibold;
   color: $color-text-primary;
-  margin-bottom: $spacing-md;
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
 .moreLink {
@@ -160,12 +165,58 @@
   flex-shrink: 0;
 }
 
-.taskContent {
+.taskInfo {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
+  gap: 8rpx;
+}
+
+.taskRow {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: $spacing-sm;
+}
+
+.taskBadge {
+  flex-shrink: 0;
+  padding: 4rpx 12rpx;
+  background: rgba($color-primary, 0.1);
+  border-radius: $radius-sm;
+  font-size: 20rpx;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
+.taskProgress {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-top: 4rpx;
+}
+
+.progressBar {
+  flex: 1;
+  height: 8rpx;
+  background: $color-bg-page;
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: 4rpx;
+}
+
+.progressText {
+  flex-shrink: 0;
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+  min-width: 60rpx;
+  text-align: right;
 }
 
 .taskTitle {
@@ -259,4 +310,110 @@
   border-radius: $radius-xs;
   color: $color-text-white;
   font-size: 20rpx;
+}
+
+.draftRow {
+  display: flex;
+  gap: $spacing-sm;
+  white-space: nowrap;
+}
+
+.draftCard {
+  flex-shrink: 0;
+  width: 200rpx;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.draftCover {
+  width: 100%;
+  height: 240rpx;
+}
+
+.draftInfo {
+  padding: $spacing-sm;
+}
+
+.draftTitle {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  @include text-ellipsis;
+}
+
+.draftTime {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.emptyMini {
+  padding: $spacing-lg;
+  text-align: center;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+}
+
+.emptyMiniText {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.collectionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-sm;
+}
+
+.collectionItem {
+  position: relative;
+  border-radius: $radius-md;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  background: $color-bg-card;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.collectionCover {
+  width: 100%;
+  height: 200rpx;
+  display: block;
+}
+
+.collectionInfo {
+  padding: $spacing-sm;
+}
+
+.collectionTitle {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  @include text-ellipsis;
+}
+
+.collectionCount {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.topBadge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 4rpx 12rpx;
+  background: $color-primary;
+  color: $color-text-white;
+  font-size: 20rpx;
+  border-bottom-right-radius: $radius-sm;
+  z-index: 2;
 }

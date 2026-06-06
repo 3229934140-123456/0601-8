@@ -1,0 +1,213 @@
+@use '@/styles/variables.scss' as *;
+
+.taskListPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  display: flex;
+  background: $color-bg-card;
+  padding: 0 $page-padding;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: $shadow-card;
+}
+
+.tabItem {
+  flex: 1;
+  text-align: center;
+  padding: $spacing-md 0;
+  position: relative;
+}
+
+.tabText {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.tabActive .tabText {
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.tabLine {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 6rpx;
+  background: $color-primary;
+  border-radius: 3rpx;
+}
+
+.taskList {
+  flex: 1;
+  padding: $spacing-md $page-padding;
+}
+
+.tasksContainer {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding-bottom: 80rpx;
+}
+
+.taskCard {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.taskCover {
+  width: 200rpx;
+  height: 240rpx;
+  border-radius: $radius-md;
+  flex-shrink: 0;
+}
+
+.taskContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.taskTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis-multi(2);
+}
+
+.taskDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  @include text-ellipsis-multi(2);
+  line-height: 1.4;
+}
+
+.taskMeta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-top: 4rpx;
+}
+
+.rewardTag {
+  padding: 4rpx 12rpx;
+  background: rgba($color-gold, 0.1);
+  border-radius: $radius-sm;
+  font-size: 22rpx;
+  color: $color-gold;
+  font-weight: $font-weight-medium;
+}
+
+.deadline {
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+}
+
+.progressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  margin-top: 4rpx;
+  padding-top: $spacing-sm;
+  border-top: 1rpx solid $color-border-light;
+}
+
+.progressInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progressLabel {
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+}
+
+.progressNum {
+  font-size: 22rpx;
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.progressBar {
+  height: 8rpx;
+  background: $color-bg-page;
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: 4rpx;
+  transition: width 0.3s ease;
+}
+
+.progressHint {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+}
+
+.taskAction {
+  margin-top: auto;
+}
+
+.primaryBtn {
+  display: inline-block;
+  padding: 10rpx 28rpx;
+  background: linear-gradient(90deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  font-size: 24rpx;
+  font-weight: $font-weight-medium;
+  border-radius: 32rpx;
+
+  &:active {
+    opacity: 0.85;
+  }
+}
+
+.completedBtn {
+  display: inline-block;
+  padding: 10rpx 28rpx;
+  background: $color-success-bg;
+  color: $color-success;
+  font-size: 24rpx;
+  font-weight: $font-weight-medium;
+  border-radius: 32rpx;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+  gap: $spacing-md;
+}
+
+.emptyIcon {
+  font-size: 96rpx;
+}
+
+.emptyText {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+}

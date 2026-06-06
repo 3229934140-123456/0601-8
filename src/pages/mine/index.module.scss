@@ -129,9 +129,10 @@
 }
 
 .quickActions {
-  display: flex;
-  justify-content: space-around;
-  padding: $spacing-lg $page-padding;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-lg;
+  padding: $spacing-lg;
   background: $color-bg-card;
   margin: -24rpx $page-padding 0;
   border-radius: $radius-lg;
@@ -337,4 +338,68 @@
   color: $color-gold-dark;
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
+}
+
+.shopList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding: $spacing-sm $page-padding;
+}
+
+.shopItem {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.shopCover {
+  width: 160rpx;
+  height: 120rpx;
+  border-radius: $radius-sm;
+  flex-shrink: 0;
+}
+
+.shopInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.shopName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+}
+
+.shopMeta {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
+}
+
+.shopRating {
+  font-size: $font-size-sm;
+  color: $color-gold;
+  font-weight: $font-weight-medium;
+}
+
+.shopPrice {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.shopAddr {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  @include text-ellipsis;
 }

@@ -145,7 +145,8 @@ const PublishSettingPage: React.FC = () => {
         duration: segments.reduce((a, b) => a + b, 0) || 15,
         shop: selectedShop,
         challenge: selectedChallenges[0] || null,
-        tags: selectedChallenges.map(c => c.name),
+        challenges: selectedChallenges,
+        tags: selectedChallenges.map(c => c.tag),
         createdAt: new Date().toISOString().split('T')[0],
         isLiked: false,
         isCollected: false,
@@ -153,21 +154,32 @@ const PublishSettingPage: React.FC = () => {
       };
 
       addVideo(newVideo);
-      console.log('[PublishSetting] video published:', newVideo.id);
+      console.log('[PublishSetting] video published:', newVideo.id, 'challenges:', selectedChallenges.map(c => c.id));
 
       if (draftId) {
         const { deleteDraft } = useAppStore.getState();
         deleteDraft(draftId);
       }
 
-      const ongoingTasks = useAppStore.getState().tasks.filter(t => t.status === 'ongoing');
+      const state = useAppStore.getState();
+      const ongoingTasks = state.tasks.filter(t => t.status === 'ongoing');
+      console.log('[PublishSetting] ongoing tasks:', ongoingTasks.map(t => ({ id: t.id, title: t.title, challengeIds: t.challengeIds })));
+
       if (ongoingTasks.length > 0 && selectedChallenges.length > 0) {
-        const { updateTaskProgress } = useAppStore.getState();
+        const { updateTaskProgress } = state;
+        const selectedChallengeIds = selectedChallenges.map(c => c.id);
+
         ongoingTasks.forEach(task => {
-          if (selectedChallenges.some(c => task.tag.includes(c.tag))) {
-            const newProgress = Math.min(task.progress + 50, 100);
-            updateTaskProgress(task.id, newProgress);
-            console.log('[PublishSetting] task progress updated:', task.id, newProgress);
+          if (task.challengeIds && task.challengeIds.length > 0) {
+            const hasMatch = task.challengeIds.some(cid => selectedChallengeIds.includes(cid));
+            console.log('[PublishSetting] task', task.id, 'match?', hasMatch, 'taskChallengeIds:', task.challengeIds);
+
+            if (hasMatch) {
+              const increment = task.requiredCount ? (100 / task.requiredCount) : 50;
+              const newProgress = Math.min(task.progress + increment, 100);
+              updateTaskProgress(task.id, newProgress);
+              console.log('[PublishSetting] task progress updated:', task.id, 'from', task.progress, 'to', newProgress);
+            }
           }
         });
       }

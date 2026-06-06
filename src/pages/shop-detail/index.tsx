@@ -10,13 +10,22 @@ import { useAppStore } from '@/store';
 const ShopDetailPage: React.FC = () => {
   const [shop, setShop] = useState<Shop | null>(null);
   const [shopId, setShopId] = useState('s1');
+  const [sortType, setSortType] = useState<'latest' | 'hot'>('latest');
   const videos = useAppStore(state => state.videos);
   const collectedShops = useAppStore(state => state.collectedShops);
   const collectShop = useAppStore(state => state.collectShop);
 
   const shopVideos = useMemo(() => {
-    return videos.filter(v => v.shop?.id === shopId);
-  }, [videos, shopId]);
+    const list = videos.filter(v => v.shop?.id === shopId);
+    if (sortType === 'hot') {
+      return [...list].sort((a, b) => b.viewsCount - a.viewsCount);
+    }
+    return [...list].sort((a, b) => {
+      const aTime = new Date(a.createdAt).getTime();
+      const bTime = new Date(b.createdAt).getTime();
+      return bTime - aTime;
+    });
+  }, [videos, shopId, sortType]);
 
   const isCollected = collectedShops.includes(shopId);
 
@@ -143,9 +152,25 @@ const ShopDetailPage: React.FC = () => {
       </View>
 
       <View className={styles.section}>
-        <View className={styles.sectionTitle}>
-          <Text>探店视频</Text>
-          <Text className={styles.moreLink}>{shop.videosCount}个视频 ›</Text>
+        <View className={styles.sectionHeader}>
+          <View className={styles.sectionTitle}>
+            <Text>探店视频</Text>
+            <Text className={styles.videoCount}>{shopVideos.length}个视频</Text>
+          </View>
+          <View className={styles.sortTabs}>
+            <View
+              className={classnames(styles.sortTab, sortType === 'latest' && styles.active)}
+              onClick={() => setSortType('latest')}
+            >
+              <Text>最新</Text>
+            </View>
+            <View
+              className={classnames(styles.sortTab, sortType === 'hot' && styles.active)}
+              onClick={() => setSortType('hot')}
+            >
+              <Text>最热</Text>
+            </View>
+          </View>
         </View>
         <View className={styles.videoList}>
           {shopVideos.map((video) => (
@@ -161,6 +186,7 @@ const ShopDetailPage: React.FC = () => {
                 onError={(e) => console.error('[ShopDetailPage] video cover error:', e)}
               />
               <View className={styles.videoInfo}>
+                <Text className={styles.videoTitle} numberOfLines={2}>{video.title}</Text>
                 <Text className={styles.videoViews}>▶ {formatNumber(video.viewsCount)}</Text>
               </View>
             </View>

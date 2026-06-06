@@ -22,9 +22,9 @@ const DraftBoxPage: React.FC = () => {
       setIsManaging(false);
       return;
     }
-    console.log('[DraftBox] edit draft:', draftId);
+    console.log('[DraftBox] edit draft, go to shoot page:', draftId);
     Taro.navigateTo({
-      url: `/pages/publish-setting/index?fromDraft=1&draftId=${draftId}`,
+      url: `/pages/shoot/index?fromDraft=1&draftId=${draftId}`,
     });
   };
 

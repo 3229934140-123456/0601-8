@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { View, Text, Image, Button, Input, ScrollView, Video as VideoComp } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
-import { mockComments } from '@/data/index';
 import { Video, Comment } from '@/types';
 import { useAppStore } from '@/store';
 
@@ -11,15 +10,35 @@ const VideoDetailPage: React.FC = () => {
   const videos = useAppStore(state => state.videos);
   const likeVideo = useAppStore(state => state.likeVideo);
   const collectVideo = useAppStore(state => state.collectVideo);
+  const addComment = useAppStore(state => state.addComment);
+  const getComments = useAppStore(state => state.getComments);
+  const currentUser = useAppStore(state => state.currentUser);
 
   const [video, setVideo] = useState<Video | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [isFollowed, setIsFollowed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showPlayBtn, setShowPlayBtn] = useState(true);
   const videoRef = useRef<any>(null);
+
+  const comments = useMemo(() => {
+    if (video) {
+      return getComments(video.id);
+    }
+    return [];
+  }, [video?.id, getComments]);
+
+  const challengeTags = useMemo(() => {
+    if (!video) return [];
+    if (video.challenges?.length) {
+      return video.challenges.map(c => c.tag);
+    }
+    if (video.challenge) {
+      return [video.challenge.tag];
+    }
+    return [];
+  }, [video]);
 
   useEffect(() => {
     const pages = Taro.getCurrentPages();
@@ -29,8 +48,6 @@ const VideoDetailPage: React.FC = () => {
     const foundVideo = videos.find(v => v.id === videoId) || videos[0];
     setVideo(foundVideo);
     setIsFollowed(foundVideo.isFollowed || false);
-
-    setComments(mockComments);
 
     console.log('[VideoDetailPage] videoId:', videoId);
   }, [videos]);
@@ -130,19 +147,36 @@ const VideoDetailPage: React.FC = () => {
   };
 
   const handleSendComment = () => {
-    if (!commentText.trim()) {
+    if (!commentText.trim() || !video) {
       Taro.showToast({
         title: '请输入评论内容',
         icon: 'none',
       });
       return;
     }
+
+    const newComment: Comment = {
+      id: 'cmt_' + Date.now(),
+      user: currentUser,
+      content: commentText.trim(),
+      likesCount: 0,
+      createdAt: '刚刚',
+      isLiked: false,
+    };
+
+    addComment(video.id, newComment);
+
+    const updatedVideo = useAppStore.getState().videos.find(v => v.id === video.id);
+    if (updatedVideo) {
+      setVideo(updatedVideo);
+    }
+
+    setCommentText('');
     Taro.showToast({
       title: '评论成功',
       icon: 'success',
     });
-    setCommentText('');
-    console.log('[VideoDetailPage] comment sent:', commentText);
+    console.log('[VideoDetailPage] comment sent:', newComment.id);
   };
 
   const handleCommentLike = (commentId: string) => {
@@ -268,12 +302,12 @@ const VideoDetailPage: React.FC = () => {
           )}
 
           <View className={styles.tagsRow}>
-            {video.tags.map((tag, index) => (
-              <Text key={index} className={styles.tagItem}>#{tag}</Text>
+            {challengeTags.slice(0, 3).map((tag, index) => (
+              <Text key={index} className={styles.tagItem}>{tag}</Text>
             ))}
-            {video.challenge && (
-              <Text className={styles.tagItem}>{video.challenge.tag}</Text>
-            )}
+            {video.tags && video.tags.slice(0, 2).map((tag, index) => (
+              <Text key={`tag_${index}`} className={styles.tagItem}>#{tag}</Text>
+            ))}
           </View>
         </View>
       </View>

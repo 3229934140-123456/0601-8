@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
@@ -20,6 +20,9 @@ const CreatorPage: React.FC = () => {
   const drafts = useAppStore(state => state.drafts);
   const tasks = useAppStore(state => state.tasks);
 
+  const data = mockCreatorData;
+  const collections = mockCollections;
+
   const formatNumber = (num: number): string => {
     if (num >= 10000) {
       return (num / 10000).toFixed(1) + 'w';
@@ -36,7 +39,8 @@ const CreatorPage: React.FC = () => {
       draft: '/pages/draft-box/index',
       collection: '/pages/collection-manage/index',
       shop: '/pages/business-info/index',
-      task: '/pages/task-detail/index',
+      task: '/pages/task-list/index',
+      data: '/pages/task-list/index',
     };
     if (routeMap[actionId]) {
       Taro.navigateTo({ url: routeMap[actionId] });
@@ -55,10 +59,22 @@ const CreatorPage: React.FC = () => {
     });
   };
 
+  const handleAllTasks = () => {
+    Taro.navigateTo({
+      url: '/pages/task-list/index',
+    });
+  };
+
   const handleDraftClick = (draftId: string) => {
     console.log('[CreatorPage] draft clicked:', draftId);
     Taro.navigateTo({
       url: `/pages/draft-box/index?id=${draftId}`,
+    });
+  };
+
+  const handleAllDrafts = () => {
+    Taro.navigateTo({
+      url: '/pages/draft-box/index',
     });
   };
 
@@ -69,11 +85,29 @@ const CreatorPage: React.FC = () => {
     });
   };
 
+  const handleManageCollections = () => {
+    Taro.navigateTo({
+      url: '/pages/collection-manage/index',
+    });
+  };
+
+  const getTaskStatusText = (status: string) => {
+    switch (status) {
+      case 'pending': return '可领取';
+      case 'ongoing': return '进行中';
+      case 'completed': return '已完成';
+      default: return '';
+    }
+  };
+
   const formatDuration = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
+  const displayTasks = useMemo(() => tasks.slice(0, 3), [tasks]);
+  const displayDrafts = useMemo(() => drafts.slice(0, 3), [drafts]);
 
   return (
     <ScrollView scrollY className={styles.creatorPage} enhanced showScrollbar={false}>
@@ -84,7 +118,7 @@ const CreatorPage: React.FC = () => {
 
       <View className={styles.statsCard}>
         <View className={styles.statsTitle}>
-          数据概览
+          <Text>数据概览</Text>
           <Text className={styles.statsDate}>今日</Text>
         </View>
 
@@ -131,13 +165,13 @@ const CreatorPage: React.FC = () => {
       </View>
 
       <View className={styles.section}>
-        <View className={styles.sectionTitle}>
-          <Text>创作任务</Text>
-          <Text className={styles.moreLink}>全部 ›</Text>
+        <View className={styles.sectionHeader}>
+          <Text className={styles.sectionTitle}>创作任务</Text>
+          <Text className={styles.moreLink} onClick={handleAllTasks}>全部 ›</Text>
         </View>
 
         <View className={styles.taskList}>
-          {tasks.map((task) => (
+          {displayTasks.map((task) => (
             <View
               key={task.id}
               className={styles.taskCard}
@@ -147,28 +181,26 @@ const CreatorPage: React.FC = () => {
                 className={styles.taskCover}
                 src={task.coverUrl}
                 mode="aspectFill"
-                onError={(e) => console.error('[CreatorPage] task image error:', e)}
               />
-              <View className={styles.taskContent}>
-                <View>
+              <View className={styles.taskInfo}>
+                <View className={styles.taskRow}>
                   <Text className={styles.taskTitle}>{task.title}</Text>
-                  <Text className={styles.taskDesc}>{task.description}</Text>
-                </View>
-                <View className={styles.taskFooter}>
-                  <View className={styles.taskReward}>
-                    <Text>🎁</Text>
-                    <Text>{task.reward}</Text>
+                  <View className={styles.taskBadge}>
+                    <Text>{getTaskStatusText(task.status)}</Text>
                   </View>
-                  <View style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
-                    <View className={styles.taskProgress}>
+                </View>
+                <Text className={styles.taskReward}>🎁 {task.reward}</Text>
+                {task.status === 'ongoing' && (
+                  <View className={styles.taskProgress}>
+                    <View className={styles.progressBar}>
                       <View
-                        className={styles.taskProgressBar}
+                        className={styles.progressFill}
                         style={{ width: `${task.progress}%` }}
                       />
                     </View>
-                    <Text className={styles.taskStatus}>{task.progress}%</Text>
+                    <Text className={styles.progressText}>{task.progress}%</Text>
                   </View>
-                </View>
+                )}
               </View>
             </View>
           ))}
@@ -176,65 +208,75 @@ const CreatorPage: React.FC = () => {
       </View>
 
       <View className={styles.section}>
-        <View className={styles.sectionTitle}>
-          <Text>草稿箱</Text>
-          <Text className={styles.moreLink}>全部草稿 ›</Text>
+        <View className={styles.sectionHeader}>
+          <Text className={styles.sectionTitle}>草稿箱</Text>
+          <Text className={styles.moreLink} onClick={handleAllDrafts}>
+            全部 {drafts.length} ›
+          </Text>
         </View>
 
-        <View className={styles.draftList}>
-          {drafts.map((draft) => (
-            <View
-              key={draft.id}
-              className={styles.draftItem}
-              onClick={() => handleDraftClick(draft.id)}
-            >
-              <Image
-                className={styles.draftCover}
-                src={draft.coverUrl}
-                mode="aspectFill"
-                onError={(e) => console.error('[CreatorPage] draft image error:', e)}
-              />
-              <View className={styles.draftDuration}>
-                <Text>{formatDuration(draft.duration)}</Text>
-              </View>
-              <View className={styles.draftInfo}>
-                <Text className={styles.draftTime}>{draft.title || '未命名'}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-      </View>
-
-      <View className={styles.section}>
-        <View className={styles.sectionTitle}>
-          <Text>合集管理</Text>
-          <Text className={styles.moreLink}>管理 ›</Text>
-        </View>
-
-        <View className={styles.taskList}>
-          {collections.map((collection) => (
-            <View
-              key={collection.id}
-              className={styles.taskCard}
-              onClick={() => handleCollectionClick(collection.id)}
-            >
-              <Image
-                className={styles.taskCover}
-                src={collection.coverUrl}
-                mode="aspectFill"
-                onError={(e) => console.error('[CreatorPage] collection image error:', e)}
-              />
-              <View className={styles.taskContent}>
-                <View>
-                  <Text className={styles.taskTitle}>
-                    {collection.title}
-                    {collection.isTop && <Text style={{ color: '#FF2E63', marginLeft: '12rpx' }}> [置顶]</Text>}
+        {displayDrafts.length === 0 ? (
+          <View className={styles.emptyMini}>
+            <Text className={styles.emptyMiniText}>暂无草稿</Text>
+          </View>
+        ) : (
+          <ScrollView scrollX className={styles.draftRow} enhanced showScrollbar={false}>
+            {displayDrafts.map((draft) => (
+              <View
+                key={draft.id}
+                className={styles.draftCard}
+                onClick={() => handleDraftClick(draft.id)}
+              >
+                <Image
+                  className={styles.draftCover}
+                  src={draft.coverUrl}
+                  mode="aspectFill"
+                />
+                <View className={styles.draftInfo}>
+                  <Text className={styles.draftTitle}>
+                    {draft.title || '未命名草稿'}
                   </Text>
-                  <Text className={styles.taskDesc}>
-                    {collection.videosCount}个视频 · {formatNumber(collection.viewsCount)}次播放
+                  <Text className={styles.draftTime}>
+                    ⏱ {formatDuration(draft.duration)}
                   </Text>
                 </View>
               </View>
+            ))}
+          </ScrollView>
+        )}
+      </View>
+
+      <View className={styles.section}>
+        <View className={styles.sectionHeader}>
+          <Text className={styles.sectionTitle}>合集管理</Text>
+          <Text className={styles.moreLink} onClick={handleManageCollections}>管理 ›</Text>
+        </View>
+
+        <View className={styles.collectionGrid}>
+          {collections.slice(0, 4).map((col) => (
+            <View
+              key={col.id}
+              className={styles.collectionItem}
+              onClick={() => handleCollectionClick(col.id)}
+            >
+              <Image
+                className={styles.collectionCover}
+                src={col.coverUrl}
+                mode="aspectFill"
+              />
+              <View className={styles.collectionInfo}>
+                <Text className={styles.collectionTitle} numberOfLines={1}>
+                  {col.title}
+                </Text>
+                <Text className={styles.collectionCount}>
+                  {col.videosCount}个视频
+                </Text>
+              </View>
+              {col.isTop && (
+                <View className={styles.topBadge}>
+                  <Text>置顶</Text>
+                </View>
+              )}
             </View>
           ))}
         </View>

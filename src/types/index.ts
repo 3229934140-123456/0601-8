@@ -31,7 +31,8 @@ export interface Video {
   viewsCount: number;
   duration: number;
   shop?: Shop;
-  challenge?: Challenge;
+  challenge?: Challenge | null;
+  challenges?: Challenge[];
   tags: string[];
   createdAt: string;
   isLiked?: boolean;
@@ -139,6 +140,8 @@ export interface CreatorTask {
   progress: number;
   status: 'pending' | 'ongoing' | 'completed';
   coverUrl: string;
+  challengeIds: string[];
+  requiredCount: number;
 }
 
 // 分类类型

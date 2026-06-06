@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, Image, Button, ScrollView, Input } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 import { Subtitle, Sticker } from '@/types';
+import { useAppStore } from '@/store';
 
 const shootModes = ['拍视频', '模板', '直播'];
 const tools = [
@@ -46,7 +47,30 @@ const ShootPage: React.FC = () => {
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [editingSubtitle, setEditingSubtitle] = useState<string | null>(null);
   const [subtitleText, setSubtitleText] = useState('');
+  const [draftId, setDraftId] = useState<string | null>(null);
   const timerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const pages = Taro.getCurrentPages();
+    const currentPage = pages[pages.length - 1];
+    const params = (currentPage as any)?.options || {};
+    const fromDraft = params.fromDraft;
+    const draftIdParam = params.draftId;
+
+    console.log('[ShootPage] params:', params);
+
+    if (fromDraft && draftIdParam) {
+      const drafts = useAppStore.getState().drafts;
+      const draft = drafts.find(d => d.id === draftIdParam);
+      if (draft) {
+        setDraftId(draft.id);
+        setSegments(draft.segments);
+        setSubtitles(draft.subtitles);
+        setStickers(draft.stickers);
+        console.log('[ShootPage] draft loaded:', draft.id, 'segments:', draft.segments.length);
+      }
+    }
+  }, []);
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -137,18 +161,55 @@ const ShootPage: React.FC = () => {
       });
       return;
     }
-    console.log('[ShootPage] go to publish setting');
-    Taro.navigateTo({
-      url: '/pages/publish-setting/index',
-    });
+
+    if (draftId) {
+      useAppStore.getState().updateDraft(draftId, {
+        segments,
+        subtitles,
+        stickers,
+      });
+    }
+
+    console.log('[ShootPage] go to publish setting, draftId:', draftId);
+    const url = draftId
+      ? `/pages/publish-setting/index?fromDraft=1&draftId=${draftId}`
+      : '/pages/publish-setting/index';
+    Taro.navigateTo({ url });
   };
 
   const handleSaveDraft = () => {
+    if (segments.length === 0) {
+      Taro.showToast({
+        title: '请先拍摄视频',
+        icon: 'none',
+      });
+      return;
+    }
+
+    const { addDraft, updateDraft } = useAppStore.getState();
+    const draftData = {
+      id: draftId || 'draft_' + Date.now(),
+      coverUrl: 'https://picsum.photos/id/237/400/700',
+      title: '',
+      segments,
+      subtitles,
+      stickers,
+      updatedAt: new Date().toLocaleString('zh-CN'),
+      duration: segments.reduce((a, b) => a + b, 0),
+    } as any;
+
+    if (draftId) {
+      updateDraft(draftId, draftData);
+    } else {
+      addDraft(draftData);
+      setDraftId(draftData.id);
+    }
+
     Taro.showToast({
       title: '已保存到草稿箱',
       icon: 'success',
     });
-    console.log('[ShootPage] saved to draft');
+    console.log('[ShootPage] saved to draft:', draftData.id);
   };
 
   const handleSelectTemplate = (id: number) => {

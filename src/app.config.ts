@@ -18,6 +18,7 @@ export default defineAppConfig({
     'pages/collection-manage/index',
     'pages/business-info/index',
     'pages/task-detail/index',
+    'pages/task-list/index',
   ],
   window: {
     backgroundTextStyle: 'light',
