@@ -1,0 +1,103 @@
+@use '@/styles/variables.scss' as *;
+
+.messagePage {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.header {
+  padding: 80rpx $page-padding $spacing-lg;
+  background: $color-bg-card;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.title {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.tabs {
+  display: flex;
+  background: $color-bg-card;
+  padding: 0 $page-padding;
+  border-bottom: 1rpx solid $color-divider;
+}
+
+.tab {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: $color-text-secondary;
+  font-size: $font-size-md;
+
+  &.active {
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 48rpx;
+      height: 6rpx;
+      background: $color-primary;
+      border-radius: 3rpx;
+    }
+  }
+}
+
+.tabBadge {
+  position: absolute;
+  top: 16rpx;
+  right: 20%;
+  min-width: 28rpx;
+  height: 28rpx;
+  padding: 0 8rpx;
+  background: $color-error;
+  border-radius: $radius-round;
+  color: $color-text-white;
+  font-size: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.messageList {
+  padding-bottom: 160rpx;
+}
+
+.divider {
+  height: 16rpx;
+  background: $color-bg-page;
+}
+
+.sectionTitle {
+  padding: $spacing-md $page-padding;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  background: $color-bg-page;
+}
+
+.emptyState {
+  padding: 120rpx $page-padding;
+  text-align: center;
+  color: $color-text-tertiary;
+}
+
+.emptyIcon {
+  font-size: 100rpx;
+  margin-bottom: $spacing-md;
+}
+
+.emptyText {
+  font-size: $font-size-md;
+}

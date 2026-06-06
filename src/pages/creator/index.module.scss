@@ -1,0 +1,262 @@
+@use '@/styles/variables.scss' as *;
+
+.creatorPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 40rpx;
+}
+
+.header {
+  padding: 80rpx $page-padding $spacing-xl;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+}
+
+.title {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+}
+
+.subtitle {
+  font-size: $font-size-sm;
+  opacity: 0.8;
+  margin-top: 8rpx;
+}
+
+.statsCard {
+  margin: -40rpx $page-padding 0;
+  padding: $spacing-lg;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  position: relative;
+  z-index: 1;
+}
+
+.statsTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.statsDate {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  font-weight: $font-weight-normal;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-md;
+}
+
+.statItem {
+  text-align: center;
+}
+
+.statValue {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.statLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.statChange {
+  font-size: $font-size-xs;
+  color: $color-success;
+  margin-top: 4rpx;
+}
+
+.section {
+  padding: $spacing-lg $page-padding 0;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.moreLink {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  font-weight: $font-weight-normal;
+}
+
+.quickGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+}
+
+.quickItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.quickIcon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-md;
+  background: rgba($color-primary, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+}
+
+.quickText {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.taskCard {
+  padding: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  gap: $spacing-md;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.taskCover {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: $radius-md;
+  flex-shrink: 0;
+}
+
+.taskContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.taskTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+}
+
+.taskDesc {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  @include text-ellipsis-multi(2);
+}
+
+.taskFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.taskReward {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  font-size: $font-size-sm;
+  color: $color-gold;
+  font-weight: $font-weight-semibold;
+}
+
+.taskProgress {
+  flex: 1;
+  height: 8rpx;
+  background: $color-bg-page;
+  border-radius: 4rpx;
+  margin-left: $spacing-md;
+  overflow: hidden;
+}
+
+.taskProgressBar {
+  height: 100%;
+  background: linear-gradient(90deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: 4rpx;
+}
+
+.taskStatus {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-left: $spacing-sm;
+}
+
+.draftList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4rpx;
+}
+
+.draftItem {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  background: $color-bg-card;
+  overflow: hidden;
+}
+
+.draftCover {
+  width: 100%;
+  height: 100%;
+}
+
+.draftInfo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: $spacing-sm;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+}
+
+.draftTime {
+  color: $color-text-white;
+  font-size: 20rpx;
+  opacity: 0.9;
+}
+
+.draftDuration {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  padding: 2rpx 8rpx;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: $radius-xs;
+  color: $color-text-white;
+  font-size: 20rpx;
+}

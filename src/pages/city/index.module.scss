@@ -1,0 +1,237 @@
+@use '@/styles/variables.scss' as *;
+
+.cityPage {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: $color-bg-page;
+}
+
+.header {
+  padding: 80rpx $page-padding $spacing-md;
+  background: $color-bg-card;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+}
+
+.title {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.citySelect {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  color: $color-text-secondary;
+  font-size: $font-size-md;
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  height: 72rpx;
+  padding: 0 $spacing-lg;
+  background: $color-bg-page;
+  border-radius: $radius-button;
+}
+
+.searchIcon {
+  color: $color-text-tertiary;
+  font-size: $font-size-lg;
+}
+
+.searchInput {
+  flex: 1;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+}
+
+.filterRow {
+  display: flex;
+  gap: $spacing-sm;
+  padding: $spacing-md $page-padding;
+  background: $color-bg-card;
+  border-bottom: 1rpx solid $color-divider;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.filterChip {
+  padding: 12rpx $spacing-lg;
+  background: $color-bg-page;
+  border-radius: $radius-button;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &.active {
+    background: $color-primary;
+    color: $color-text-white;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.distanceTabs {
+  display: flex;
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  gap: $spacing-md;
+  border-bottom: 1rpx solid $color-divider;
+}
+
+.distanceTab {
+  flex: 1;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-page;
+  border-radius: $radius-button;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+
+  &.active {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.viewToggle {
+  position: absolute;
+  right: $page-padding;
+  top: 180rpx;
+  z-index: 20;
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-card;
+  border-radius: $radius-round;
+  box-shadow: $shadow-float;
+  font-size: 36rpx;
+}
+
+.mapContainer {
+  flex: 1;
+  position: relative;
+  background: linear-gradient(180deg, #E8F4F8 0%, #F0F7FA 100%);
+  overflow: hidden;
+}
+
+.mapPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-tertiary;
+  font-size: $font-size-md;
+}
+
+.mapPins {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.mapPin {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -100%);
+
+  &.active {
+    z-index: 10;
+  }
+}
+
+.pinBubble {
+  padding: 8rpx 16rpx;
+  background: $color-primary;
+  color: $color-text-white;
+  font-size: $font-size-xs;
+  border-radius: $radius-md;
+  white-space: nowrap;
+  margin-bottom: 8rpx;
+
+  &.active {
+    padding: 12rpx 20rpx;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.pinIcon {
+  font-size: 40rpx;
+}
+
+.shopList {
+  flex: 1;
+  padding: $spacing-md $page-padding;
+  overflow-y: auto;
+}
+
+.shopListContent {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding-bottom: 160rpx;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.listCount {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  font-weight: $font-weight-normal;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding;
+  background: $color-bg-card;
+  border-top: 1rpx solid $color-divider;
+  display: flex;
+  gap: $spacing-md;
+  z-index: 100;
+}
+
+.collectRouteBtn {
+  flex: 1;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  background: $color-primary;
+  border-radius: $radius-button;
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+}

@@ -1,0 +1,207 @@
+@use '@/styles/variables.scss' as *;
+
+.challengePage {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 40rpx;
+}
+
+.header {
+  padding: 80rpx $page-padding $spacing-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  position: relative;
+  overflow: hidden;
+}
+
+.title {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+}
+
+.subtitle {
+  font-size: $font-size-sm;
+  opacity: 0.8;
+  margin-top: 8rpx;
+}
+
+.searchBar {
+  margin-top: $spacing-lg;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 0 $spacing-lg;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: $radius-button;
+}
+
+.searchIcon {
+  font-size: $font-size-lg;
+}
+
+.searchInput {
+  flex: 1;
+  font-size: $font-size-sm;
+  color: $color-text-white;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.section {
+  padding: $spacing-lg $page-padding 0;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.moreLink {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  font-weight: $font-weight-normal;
+}
+
+.hotChallenge {
+  border-radius: $radius-lg;
+  overflow: hidden;
+  position: relative;
+  height: 280rpx;
+  margin-bottom: $spacing-md;
+}
+
+.hotCover {
+  width: 100%;
+  height: 100%;
+}
+
+.hotOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: $spacing-lg;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: $color-text-white;
+}
+
+.hotTag {
+  position: absolute;
+  top: $spacing-md;
+  left: $spacing-md;
+  padding: 8rpx 16rpx;
+  background: $color-gold;
+  border-radius: $radius-xs;
+  color: $color-text-white;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+}
+
+.hotTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  margin-bottom: 8rpx;
+}
+
+.hotMeta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  font-size: $font-size-xs;
+  opacity: 0.9;
+}
+
+.challengeList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.challengeCard {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.challengeCover {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: $radius-md;
+  flex-shrink: 0;
+}
+
+.challengeContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.challengeName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis-multi(2);
+}
+
+.challengeDesc {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  @include text-ellipsis-multi(2);
+}
+
+.challengeFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.challengeStats {
+  display: flex;
+  gap: $spacing-md;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.joinBtn {
+  @include button-reset;
+  padding: 8rpx $spacing-lg;
+  background: $color-primary;
+  border-radius: $radius-button;
+  color: $color-text-white;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+
+  &.joined {
+    background: $color-bg-page;
+    color: $color-text-tertiary;
+  }
+}
+
+.rewardBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 4rpx 12rpx;
+  background: rgba($color-gold, 0.1);
+  border-radius: $radius-xs;
+  color: $color-gold;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}

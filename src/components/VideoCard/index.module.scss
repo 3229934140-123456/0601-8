@@ -1,0 +1,228 @@
+@use '@/styles/variables.scss' as *;
+
+.videoCard {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: $color-bg-dark;
+  overflow: hidden;
+}
+
+.coverImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.durationTag {
+  position: absolute;
+  top: $spacing-lg;
+  right: $spacing-lg;
+  padding: 4rpx 12rpx;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: $radius-xs;
+  color: $color-text-white;
+  font-size: $font-size-xs;
+}
+
+.sideActions {
+  position: absolute;
+  right: $spacing-lg;
+  bottom: 240rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xl;
+}
+
+.actionItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.actionIcon {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: $radius-round;
+  color: $color-text-white;
+  font-size: 36rpx;
+
+  &.active {
+    color: $color-primary;
+  }
+}
+
+.actionCount {
+  color: $color-text-white;
+  font-size: $font-size-sm;
+}
+
+.videoInfo {
+  position: absolute;
+  left: 0;
+  right: 140rpx;
+  bottom: $spacing-xl;
+  padding: 0 $spacing-lg;
+}
+
+.authorRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.authorAvatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-round;
+  border: 2rpx solid $color-text-white;
+}
+
+.authorName {
+  flex: 1;
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  @include text-ellipsis;
+}
+
+.followBtn {
+  @include button-reset;
+  width: 100rpx;
+  height: 52rpx;
+  background: $color-primary;
+  border-radius: $radius-button;
+  color: $color-text-white;
+  font-size: $font-size-sm;
+
+  &.followed {
+    background: rgba(255, 255, 255, 0.3);
+    border: 1rpx solid rgba(255, 255, 255, 0.5);
+  }
+}
+
+.videoTitle {
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-normal;
+  margin-bottom: $spacing-sm;
+  @include text-ellipsis-multi(2);
+}
+
+.videoDesc {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: $font-size-sm;
+  line-height: $line-height-normal;
+  margin-bottom: $spacing-sm;
+  @include text-ellipsis-multi(2);
+}
+
+.tagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.tagItem {
+  padding: 4rpx 16rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: $radius-sm;
+  color: $color-text-white;
+  font-size: $font-size-xs;
+}
+
+.shopCard {
+  position: absolute;
+  left: $spacing-lg;
+  right: 140rpx;
+  bottom: 140rpx;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-sm;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: $radius-md;
+}
+
+.shopCover {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: $radius-sm;
+  flex-shrink: 0;
+}
+
+.shopInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.shopName {
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  @include text-ellipsis;
+}
+
+.shopMeta {
+  margin-top: 4rpx;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: $font-size-xs;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.shopRating {
+  color: $color-gold;
+}
+
+.topBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 80rpx $spacing-lg $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+}
+
+.cityBtn {
+  @include button-reset;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+}
+
+.searchBox {
+  flex: 1;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 0 $spacing-md;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: $radius-button;
+}
+
+.searchIcon {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: $font-size-lg;
+}
+
+.searchText {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: $font-size-sm;
+}

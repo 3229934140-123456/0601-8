@@ -1,0 +1,80 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, Swiper, SwiperItem } from '@tarojs/components';
+import Taro from '@tarojs/taro';
+import styles from './index.module.scss';
+import VideoCard from '@/components/VideoCard';
+import { mockVideos, mockChallenges } from '@/data/index';
+import { Video } from '@/types';
+
+const HomePage: React.FC = () => {
+  const [videos, setVideos] = useState<Video[]>(mockVideos);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [hotChallenge, setHotChallenge] = useState(mockChallenges.find(c => c.isHot));
+  const [showChallenge, setShowChallenge] = useState(true);
+
+  useEffect(() => {
+    console.log('[HomePage] mounted, videos count:', videos.length);
+  }, [videos.length]);
+
+  const handleSwiperChange = (e) => {
+    const index = e.detail.current;
+    setCurrentIndex(index);
+    setShowChallenge(index === 0);
+    console.log('[HomePage] swiper changed to index:', index);
+  };
+
+  const handleChallengeClick = () => {
+    Taro.navigateTo({
+      url: '/pages/challenge/index',
+    });
+  };
+
+  const handleReachBottom = () => {
+    console.log('[HomePage] reach bottom, loading more...');
+    Taro.showToast({
+      title: '加载中...',
+      icon: 'loading',
+      duration: 500,
+    });
+  };
+
+  return (
+    <View className={styles.homePage}>
+      {showChallenge && hotChallenge && (
+        <View className={styles.challengeBanner} onClick={handleChallengeClick}>
+          <View className={styles.challengeIcon}>
+            <Text>🏆</Text>
+          </View>
+          <View className={styles.challengeInfo}>
+            <Text className={styles.challengeTitle}>{hotChallenge.title}</Text>
+            <Text className={styles.challengeDesc}>
+              {hotChallenge.participantsCount.toLocaleString()}人参与 · 赢{hotChallenge.reward}
+            </Text>
+          </View>
+          <View className={styles.challengeJoin}>
+            <Text>参与</Text>
+          </View>
+        </View>
+      )}
+
+      <Swiper
+        className={styles.swiper}
+        vertical
+        circular
+        current={currentIndex}
+        onChange={handleSwiperChange}
+        onAnimationFinish={handleReachBottom}
+        indicatorDots={false}
+        duration={300}
+      >
+        {videos.map((video) => (
+          <SwiperItem key={video.id} className={styles.swiperItem}>
+            <VideoCard video={video} showTopBar={currentIndex === videos.indexOf(video)} />
+          </SwiperItem>
+        ))}
+      </Swiper>
+    </View>
+  );
+};
+
+export default HomePage;

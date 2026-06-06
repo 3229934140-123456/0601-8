@@ -1,0 +1,251 @@
+@use '@/styles/variables.scss' as *;
+
+.searchPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.header {
+  padding: 80rpx $page-padding $spacing-md;
+  background: $color-bg-card;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.cancelBtn {
+  @include button-reset;
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.searchBar {
+  flex: 1;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 0 $spacing-lg;
+  background: $color-bg-page;
+  border-radius: $radius-button;
+}
+
+.searchIcon {
+  color: $color-text-tertiary;
+  font-size: $font-size-lg;
+}
+
+.searchInput {
+  flex: 1;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+}
+
+.clearBtn {
+  @include button-reset;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: $radius-round;
+  background: $color-text-tertiary;
+  color: $color-text-white;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tabs {
+  display: flex;
+  background: $color-bg-card;
+  padding: 0 $page-padding;
+  border-bottom: 1rpx solid $color-divider;
+}
+
+.tab {
+  flex: 1;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: $color-text-secondary;
+  font-size: $font-size-md;
+
+  &.active {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40rpx;
+      height: 6rpx;
+      background: $color-primary;
+      border-radius: 3rpx;
+    }
+  }
+}
+
+.content {
+  padding: $spacing-md $page-padding;
+}
+
+.sectionTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.clearHistory {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  font-weight: $font-weight-normal;
+}
+
+.historyTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.historyTag {
+  padding: 12rpx $spacing-lg;
+  background: $color-bg-card;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.hotSearch {
+  margin-top: $spacing-lg;
+}
+
+.hotList {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  overflow: hidden;
+}
+
+.hotItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+
+  &:not(:last-child) {
+    border-bottom: 1rpx solid $color-divider;
+  }
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.hotRank {
+  width: 40rpx;
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+  color: $color-text-tertiary;
+  text-align: center;
+
+  &.top1 { color: $color-error; }
+  &.top2 { color: $color-warning; }
+  &.top3 { color: $color-gold; }
+}
+
+.hotText {
+  flex: 1;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  @include text-ellipsis;
+}
+
+.hotTag {
+  padding: 4rpx 12rpx;
+  background: rgba($color-error, 0.1);
+  border-radius: $radius-xs;
+  color: $color-error;
+  font-size: $font-size-xs;
+  flex-shrink: 0;
+}
+
+.searchResults {
+  padding: $spacing-md $page-padding;
+}
+
+.resultItem {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md 0;
+  border-bottom: 1rpx solid $color-divider;
+}
+
+.resultCover {
+  width: 180rpx;
+  height: 240rpx;
+  border-radius: $radius-md;
+  flex-shrink: 0;
+}
+
+.resultContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.resultTitle {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  @include text-ellipsis-multi(2);
+}
+
+.resultMeta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.resultAuthor {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: $radius-round;
+}
+
+.resultAuthorName {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.resultStats {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-left: auto;
+}
+
+.emptyState {
+  padding: 120rpx $page-padding;
+  text-align: center;
+  color: $color-text-tertiary;
+}
+
+.emptyIcon {
+  font-size: 100rpx;
+  margin-bottom: $spacing-md;
+}
+
+.emptyText {
+  font-size: $font-size-md;
+}

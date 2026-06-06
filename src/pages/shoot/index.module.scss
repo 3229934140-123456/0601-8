@@ -1,0 +1,362 @@
+@use '@/styles/variables.scss' as *;
+
+.shootPage {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: $color-bg-dark;
+  position: relative;
+}
+
+.previewArea {
+  flex: 1;
+  position: relative;
+  background: linear-gradient(180deg, #2c3e50 0%, #1a1a2e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.previewPlaceholder {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.previewIcon {
+  font-size: 120rpx;
+  margin-bottom: $spacing-lg;
+}
+
+.previewText {
+  font-size: $font-size-md;
+}
+
+.topBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 80rpx $page-padding $spacing-md;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+  z-index: 10;
+}
+
+.closeBtn {
+  @include button-reset;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: $radius-round;
+  background: rgba(0, 0, 0, 0.4);
+  color: $color-text-white;
+  font-size: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topActions {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.topAction {
+  @include button-reset;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: $radius-round;
+  background: rgba(0, 0, 0, 0.4);
+  color: $color-text-white;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer {
+  position: absolute;
+  top: 160rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8rpx 24rpx;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: $radius-button;
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  z-index: 10;
+}
+
+.modeTabs {
+  position: absolute;
+  top: 200rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: $spacing-lg;
+  z-index: 10;
+}
+
+.modeTab {
+  padding: $spacing-sm $spacing-md;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: $font-size-md;
+
+  &.active {
+    color: $color-text-white;
+    font-weight: $font-weight-semibold;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40rpx;
+      height: 4rpx;
+      background: $color-primary;
+      border-radius: 2rpx;
+    }
+  }
+}
+
+.bottomArea {
+  padding: $spacing-lg $page-padding $spacing-xl;
+  background: $color-bg-dark;
+}
+
+.shootActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: $spacing-lg;
+}
+
+.sideAction {
+  @include button-reset;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-round;
+  background: rgba(255, 255, 255, 0.1);
+  color: $color-text-white;
+  font-size: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.sideActionText {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.shootBtn {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: $radius-round;
+  background: $color-primary;
+  border: 8rpx solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-white;
+  font-size: 48rpx;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.recording {
+    width: 60rpx;
+    height: 60rpx;
+    border-radius: $radius-sm;
+    background: $color-error;
+    border: none;
+  }
+}
+
+.segmentsBar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+  overflow-x: auto;
+  padding-bottom: $spacing-sm;
+}
+
+.segmentItem {
+  width: 80rpx;
+  height: 120rpx;
+  border-radius: $radius-sm;
+  background: rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+
+  &.active {
+    border: 2rpx solid $color-primary;
+  }
+
+  &.add {
+    border: 2rpx dashed rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 32rpx;
+  }
+}
+
+.segmentDelete {
+  position: absolute;
+  top: 4rpx;
+  right: 4rpx;
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: $radius-round;
+  background: rgba(0, 0, 0, 0.6);
+  color: $color-text-white;
+  font-size: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolsRow {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: $spacing-lg;
+}
+
+.toolItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.toolIcon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-md;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+
+.toolText {
+  font-size: $font-size-xs;
+}
+
+.nextStep {
+  height: 88rpx;
+  background: $color-primary;
+  border-radius: $radius-button;
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.disabled {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.templateModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+}
+
+.modalContent {
+  width: 100%;
+  max-height: 80vh;
+  background: $color-bg-card;
+  border-radius: $radius-xl $radius-xl 0 0;
+  padding: $spacing-lg $page-padding;
+}
+
+.modalTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-lg;
+  text-align: center;
+}
+
+.templateGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.templateItem {
+  position: relative;
+  height: 240rpx;
+  border-radius: $radius-md;
+  overflow: hidden;
+  background: $color-bg-page;
+
+  &.selected {
+    border: 4rpx solid $color-primary;
+  }
+}
+
+.templateCover {
+  width: 100%;
+  height: 100%;
+}
+
+.templateName {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-sm $spacing-md;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  color: $color-text-white;
+  font-size: $font-size-sm;
+}
+
+.modalActions {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.modalBtn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+
+  &.cancel {
+    background: $color-bg-page;
+    color: $color-text-secondary;
+  }
+
+  &.confirm {
+    background: $color-primary;
+    color: $color-text-white;
+  }
+}
