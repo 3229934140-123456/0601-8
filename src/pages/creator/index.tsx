@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { mockCreatorData, mockDrafts, mockCreatorTasks, mockCollections } from '@/data/index';
+import { mockCreatorData, mockCollections } from '@/data/index';
+import { useAppStore } from '@/store';
 
 const quickActions = [
   { id: 'data', icon: '📊', name: '数据中心' },
@@ -16,10 +17,8 @@ const quickActions = [
 ];
 
 const CreatorPage: React.FC = () => {
-  const [data] = useState(mockCreatorData);
-  const [drafts] = useState(mockDrafts);
-  const [tasks] = useState(mockCreatorTasks);
-  const [collections] = useState(mockCollections);
+  const drafts = useAppStore(state => state.drafts);
+  const tasks = useAppStore(state => state.tasks);
 
   const formatNumber = (num: number): string => {
     if (num >= 10000) {

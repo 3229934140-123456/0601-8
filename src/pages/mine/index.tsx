@@ -3,14 +3,20 @@ import { View, Text, Image, Button, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
-import { mockVideos, mockUsers } from '@/data/index';
+import { useAppStore } from '@/store';
+import { Video } from '@/types';
 
 const tabs = ['作品', '收藏', '喜欢'];
 
 const MinePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('作品');
-  const currentUser = mockUsers[0];
-  const myVideos = mockVideos.slice(0, 6);
+  const currentUser = useAppStore(state => state.currentUser);
+  const videos = useAppStore(state => state.videos);
+  const likedVideos = useAppStore(state => state.getLikedVideos());
+  const collectedVideos = useAppStore(state => state.getCollectedVideos());
+  const drafts = useAppStore(state => state.drafts);
+
+  const myVideos = videos.filter(v => v.author.id === currentUser.id);
 
   const formatNumber = (num: number): string => {
     if (num >= 10000) {
@@ -47,9 +53,8 @@ const MinePage: React.FC = () => {
   };
 
   const handleDraft = () => {
-    Taro.showToast({
-      title: '草稿箱',
-      icon: 'none',
+    Taro.navigateTo({
+      url: '/pages/draft-box/index',
     });
   };
 
@@ -67,60 +72,48 @@ const MinePage: React.FC = () => {
   };
 
   const handleMyCollections = () => {
-    Taro.showToast({
-      title: '我的收藏',
-      icon: 'none',
-    });
+    setActiveTab('收藏');
+  };
+
+  const renderVideoGrid = (videoList: Video[], emptyText: string) => {
+    if (videoList.length === 0) {
+      return (
+        <View className={styles.emptyState}>
+          <Text className={styles.emptyIcon}>🎬</Text>
+          <Text className={styles.emptyText}>{emptyText}</Text>
+        </View>
+      );
+    }
+    return (
+      <View className={styles.contentGrid}>
+        {videoList.map((video) => (
+          <View
+            key={video.id}
+            className={styles.gridItem}
+            onClick={() => handleVideoClick(video.id)}
+          >
+            <Image
+              className={styles.gridCover}
+              src={video.coverUrl}
+              mode="aspectFill"
+            />
+            <View className={styles.gridInfo}>
+              <Text className={styles.gridViews}>▶ {formatNumber(video.viewsCount)}</Text>
+            </View>
+          </View>
+        ))}
+      </View>
+    );
   };
 
   const renderContent = () => {
     if (activeTab === '作品') {
-      if (myVideos.length === 0) {
-        return (
-          <View className={styles.emptyState}>
-            <Text className={styles.emptyIcon}>🎬</Text>
-            <Text className={styles.emptyText}>还没有发布作品</Text>
-          </View>
-        );
-      }
-      return (
-        <View className={styles.contentGrid}>
-          {myVideos.map((video) => (
-            <View
-              key={video.id}
-              className={styles.gridItem}
-              onClick={() => handleVideoClick(video.id)}
-            >
-              <Image
-                className={styles.gridCover}
-                src={video.coverUrl}
-                mode="aspectFill"
-                onError={(e) => console.error('[MinePage] image error:', e)}
-              />
-              <View className={styles.gridInfo}>
-                <Text className={styles.gridViews}>▶ {formatNumber(video.viewsCount)}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-      );
+      return renderVideoGrid(myVideos, '还没有发布作品，快去拍摄吧~');
     }
-
     if (activeTab === '收藏') {
-      return (
-        <View className={styles.emptyState}>
-          <Text className={styles.emptyIcon}>⭐</Text>
-          <Text className={styles.emptyText}>收藏的作品</Text>
-        </View>
-      );
+      return renderVideoGrid(collectedVideos, '还没有收藏的作品');
     }
-
-    return (
-      <View className={styles.emptyState}>
-        <Text className={styles.emptyIcon}>❤️</Text>
-        <Text className={styles.emptyText}>喜欢的作品</Text>
-      </View>
-    );
+    return renderVideoGrid(likedVideos, '还没有喜欢的作品');
   };
 
   return (
@@ -140,7 +133,6 @@ const MinePage: React.FC = () => {
             className={styles.avatar}
             src={currentUser.avatar}
             mode="aspectFill"
-            onError={(e) => console.error('[MinePage] avatar error:', e)}
           />
           <View className={styles.userInfo}>
             <View className={styles.userName}>
@@ -166,7 +158,7 @@ const MinePage: React.FC = () => {
             <Text className={styles.statLabel}>粉丝</Text>
           </View>
           <View className={styles.statItem}>
-            <Text className={styles.statValue}>{formatNumber(currentUser.worksCount)}</Text>
+            <Text className={styles.statValue}>{myVideos.length}</Text>
             <Text className={styles.statLabel}>作品</Text>
           </View>
           <View className={styles.statItem}>
@@ -188,6 +180,11 @@ const MinePage: React.FC = () => {
             <Text>📝</Text>
           </View>
           <Text className={styles.quickActionText}>草稿箱</Text>
+          {drafts.length > 0 && (
+            <View className={styles.draftBadge}>
+              <Text>{drafts.length}</Text>
+            </View>
+          )}
         </View>
         <View className={styles.quickAction} onClick={handleMyCollections}>
           <View className={styles.quickActionIcon}>

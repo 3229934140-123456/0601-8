@@ -3,10 +3,12 @@ import { View, Text, Image, ScrollView, Button, Progress } from '@tarojs/compone
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
-import { mockCreatorTasks } from '@/data/index';
 import { CreatorTask } from '@/types';
+import { useAppStore } from '@/store';
 
 const TaskDetailPage: React.FC = () => {
+  const tasks = useAppStore(state => state.tasks);
+  const claimTask = useAppStore(state => state.claimTask);
   const [task, setTask] = useState<CreatorTask | null>(null);
 
   useEffect(() => {
@@ -18,28 +20,22 @@ const TaskDetailPage: React.FC = () => {
     console.log('[TaskDetail] params:', params);
 
     if (taskId) {
-      const found = mockCreatorTasks.find(t => t.id === taskId);
+      const found = tasks.find(t => t.id === taskId);
       if (found) {
         setTask(found);
       } else {
-        setTask(mockCreatorTasks[0]);
+        setTask(tasks[0]);
       }
     } else {
-      setTask(mockCreatorTasks[0]);
+      setTask(tasks[0]);
     }
-  }, []);
+  }, [tasks]);
 
   const handleClaim = () => {
     if (!task) return;
-    setTask({
-      ...task,
-      status: 'ongoing',
-      progress: 0,
-    });
-    Taro.showToast({
-      title: '领取成功',
-      icon: 'success',
-    });
+    claimTask(task.id);
+    const updated = useAppStore.getState().tasks.find(t => t.id === task.id);
+    if (updated) setTask(updated);
     console.log('[TaskDetail] task claimed:', task.id);
   };
 

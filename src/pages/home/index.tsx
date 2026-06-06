@@ -1,26 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Swiper, SwiperItem } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
 import VideoCard from '@/components/VideoCard';
-import { mockVideos, mockChallenges } from '@/data/index';
-import { Video } from '@/types';
+import { mockChallenges } from '@/data/index';
+import { useAppStore } from '@/store';
 
 const HomePage: React.FC = () => {
-  const [videos, setVideos] = useState<Video[]>(mockVideos);
+  const videos = useAppStore(state => state.videos);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [hotChallenge, setHotChallenge] = useState(mockChallenges.find(c => c.isHot));
+  const hotChallenge = mockChallenges.find(c => c.isHot);
   const [showChallenge, setShowChallenge] = useState(true);
-
-  useEffect(() => {
-    console.log('[HomePage] mounted, videos count:', videos.length);
-  }, [videos.length]);
 
   const handleSwiperChange = (e) => {
     const index = e.detail.current;
     setCurrentIndex(index);
     setShowChallenge(index === 0);
-    console.log('[HomePage] swiper changed to index:', index);
+    console.log('[HomePage] swiper changed to index:', index, 'videos count:', videos.length);
   };
 
   const handleChallengeClick = () => {

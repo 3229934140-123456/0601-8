@@ -1,29 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Image, ScrollView, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
-import { mockShops, mockVideos } from '@/data/index';
-import { Shop, Video } from '@/types';
+import { mockShops } from '@/data/index';
+import { Shop } from '@/types';
+import { useAppStore } from '@/store';
 
 const ShopDetailPage: React.FC = () => {
   const [shop, setShop] = useState<Shop | null>(null);
-  const [shopVideos, setShopVideos] = useState<Video[]>([]);
-  const [isCollected, setIsCollected] = useState(false);
+  const [shopId, setShopId] = useState('s1');
+  const videos = useAppStore(state => state.videos);
+  const collectedShops = useAppStore(state => state.collectedShops);
+  const collectShop = useAppStore(state => state.collectShop);
+
+  const shopVideos = useMemo(() => {
+    return videos.filter(v => v.shop?.id === shopId);
+  }, [videos, shopId]);
+
+  const isCollected = collectedShops.includes(shopId);
 
   useEffect(() => {
     const pages = Taro.getCurrentPages();
     const currentPage = pages[pages.length - 1];
-    const shopId = (currentPage as any)?.options?.id || 's1';
+    const id = (currentPage as any)?.options?.id || 's1';
+    setShopId(id);
 
-    const foundShop = mockShops.find(s => s.id === shopId) || mockShops[0];
+    const foundShop = mockShops.find(s => s.id === id) || mockShops[0];
     setShop(foundShop);
-    setIsCollected(foundShop.isCollected || false);
 
-    const relatedVideos = mockVideos.filter(v => v.shop?.id === shopId || v.shop?.id === 's1');
-    setShopVideos(relatedVideos.length > 0 ? relatedVideos : mockVideos.slice(0, 6));
-
-    console.log('[ShopDetailPage] shopId:', shopId);
+    console.log('[ShopDetailPage] shopId:', id);
   }, []);
 
   const formatNumber = (num: number): string => {
@@ -41,8 +47,7 @@ const ShopDetailPage: React.FC = () => {
   };
 
   const handleCollect = () => {
-    setIsCollected(!isCollected);
-    console.log('[ShopDetailPage] collect toggled:', !isCollected);
+    collectShop(shopId);
     Taro.showToast({
       title: isCollected ? '已取消收藏' : '收藏成功',
       icon: 'none',

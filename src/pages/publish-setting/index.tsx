@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Textarea, Input, Image, ScrollView, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
-import { mockShops, mockChallenges, mockVideos } from '@/data/index';
-import { Shop, Challenge, Video } from '@/types';
+import { mockShops, mockChallenges, mockUsers } from '@/data/index';
+import { Shop, Challenge, Video, Subtitle, Sticker, DraftVideo } from '@/types';
+import { useAppStore } from '@/store';
 
 const PublishSettingPage: React.FC = () => {
+  const addVideo = useAppStore(state => state.addVideo);
+  const addDraft = useAppStore(state => state.addDraft);
+  const updateDraft = useAppStore(state => state.updateDraft);
+  const currentUser = useAppStore(state => state.currentUser);
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
@@ -15,7 +21,41 @@ const PublishSettingPage: React.FC = () => {
   const [showChallengePicker, setShowChallengePicker] = useState(false);
   const [saveDraft, setSaveDraft] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [videos, setVideos] = useState<Video[]>(mockVideos);
+  const [draftId, setDraftId] = useState<string | null>(null);
+  const [segments, setSegments] = useState<number[]>([]);
+  const [subtitles, setSubtitles] = useState<Subtitle[]>([]);
+  const [stickers, setStickers] = useState<Sticker[]>([]);
+
+  useEffect(() => {
+    const pages = Taro.getCurrentPages();
+    const currentPage = pages[pages.length - 1];
+    const params = (currentPage as any)?.options || {};
+    const fromDraft = params.fromDraft;
+    const draftIdParam = params.draftId;
+
+    console.log('[PublishSetting] params:', params);
+
+    if (fromDraft && draftIdParam) {
+      const drafts = useAppStore.getState().drafts;
+      const draft = drafts.find(d => d.id === draftIdParam);
+      if (draft) {
+        setDraftId(draft.id);
+        setTitle(draft.title || '');
+        setDescription(draft.description || '');
+        setSegments(draft.segments);
+        setSubtitles(draft.subtitles);
+        setStickers(draft.stickers);
+        if (draft.shopId) {
+          const shop = mockShops.find(s => s.id === draft.shopId);
+          if (shop) setSelectedShop(shop);
+        }
+        if (draft.challengeIds && draft.challengeIds.length > 0) {
+          const challenges = mockChallenges.filter(c => draft.challengeIds?.includes(c.id));
+          setSelectedChallenges(challenges);
+        }
+      }
+    }
+  }, []);
 
   const handleTitleInput = (e) => {
     setTitle(e.detail.value);
@@ -58,57 +98,90 @@ const PublishSettingPage: React.FC = () => {
 
     setIsSubmitting(true);
 
-    const newVideo: Video = {
-      id: 'v_new_' + Date.now(),
-      title: title,
-      description: description,
-      coverUrl: 'https://picsum.photos/id/237/400/700',
-      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      author: {
-        id: 'u0',
-        nickname: '探店达人小明',
-        avatar: 'https://picsum.photos/id/64/200/200',
-        isVerified: true,
-        followersCount: 12000,
-        followingCount: 100,
-        worksCount: 50,
-      },
-      likesCount: 0,
-      commentsCount: 0,
-      sharesCount: 0,
-      collectCount: 0,
-      viewsCount: 0,
-      duration: 15,
-      shop: selectedShop,
-      challenge: selectedChallenges[0] || null,
-      tags: selectedChallenges.map(c => c.name),
-      createdAt: new Date().toISOString().split('T')[0],
-      isLiked: false,
-      isCollected: false,
-      isFollowed: false,
-    };
-
-    console.log('[Publish] new video:', newVideo);
-
     if (saveDraft) {
+      const draftData: DraftVideo = {
+        id: draftId || 'draft_' + Date.now(),
+        coverUrl: 'https://picsum.photos/id/237/400/700',
+        title: title,
+        segments: segments.length > 0 ? segments : [15],
+        subtitles: subtitles,
+        stickers: stickers,
+        updatedAt: new Date().toLocaleString('zh-CN'),
+        duration: segments.reduce((a, b) => a + b, 0) || 15,
+        shopId: selectedShop?.id,
+        challengeIds: selectedChallenges.map(c => c.id),
+        description: description,
+      };
+
+      if (draftId) {
+        updateDraft(draftId, draftData);
+      } else {
+        addDraft(draftData);
+      }
+
       Taro.showToast({
         title: '已保存到草稿箱',
         icon: 'success',
       });
-      console.log('[Publish] saved as draft');
+      console.log('[PublishSetting] saved as draft:', draftData.id);
+
+      setTimeout(() => {
+        setIsSubmitting(false);
+        Taro.navigateBack();
+      }, 1500);
     } else {
-      setVideos([newVideo, ...videos]);
+      const newVideo: Video = {
+        id: 'v_new_' + Date.now(),
+        title: title,
+        description: description,
+        coverUrl: 'https://picsum.photos/id/237/400/700',
+        videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+        author: currentUser,
+        likesCount: 0,
+        commentsCount: 0,
+        sharesCount: 0,
+        collectCount: 0,
+        viewsCount: 0,
+        duration: segments.reduce((a, b) => a + b, 0) || 15,
+        shop: selectedShop,
+        challenge: selectedChallenges[0] || null,
+        tags: selectedChallenges.map(c => c.name),
+        createdAt: new Date().toISOString().split('T')[0],
+        isLiked: false,
+        isCollected: false,
+        isFollowed: false,
+      };
+
+      addVideo(newVideo);
+      console.log('[PublishSetting] video published:', newVideo.id);
+
+      if (draftId) {
+        const { deleteDraft } = useAppStore.getState();
+        deleteDraft(draftId);
+      }
+
+      const ongoingTasks = useAppStore.getState().tasks.filter(t => t.status === 'ongoing');
+      if (ongoingTasks.length > 0 && selectedChallenges.length > 0) {
+        const { updateTaskProgress } = useAppStore.getState();
+        ongoingTasks.forEach(task => {
+          if (selectedChallenges.some(c => task.tag.includes(c.tag))) {
+            const newProgress = Math.min(task.progress + 50, 100);
+            updateTaskProgress(task.id, newProgress);
+            console.log('[PublishSetting] task progress updated:', task.id, newProgress);
+          }
+        });
+      }
+
       Taro.showToast({
         title: '发布成功',
         icon: 'success',
       });
-      console.log('[Publish] video published');
-    }
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      Taro.switchTab({ url: '/pages/home/index' });
-    }, 1500);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        Taro.switchTab({ url: '/pages/home/index' });
+      }, 1500);
+    }
   };
 
   const handleSaveDraftToggle = () => {
@@ -208,7 +281,7 @@ const PublishSettingPage: React.FC = () => {
           className={classnames(styles.publishBtn, isSubmitting && styles.disabled)}
           onClick={handlePublish}
         >
-          <Text>{isSubmitting ? '发布中...' : (saveDraft ? '保存草稿' : '发布')}</Text>
+          <Text>{isSubmitting ? '处理中...' : (saveDraft ? '保存草稿' : '发布')}</Text>
         </View>
       </View>
 

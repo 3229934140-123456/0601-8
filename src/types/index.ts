@@ -211,4 +211,7 @@ export interface DraftVideo {
   stickers: Sticker[];
   updatedAt: string;
   duration: number;
+  shopId?: string;
+  challengeIds?: string[];
+  description?: string;
 }

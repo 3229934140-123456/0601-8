@@ -1,39 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, Button, Input, ScrollView } from '@tarojs/components';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, Image, Button, Input, ScrollView, Video as VideoComp } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
-import { mockVideos, mockComments } from '@/data/index';
+import { mockComments } from '@/data/index';
 import { Video, Comment } from '@/types';
+import { useAppStore } from '@/store';
 
 const VideoDetailPage: React.FC = () => {
+  const videos = useAppStore(state => state.videos);
+  const likeVideo = useAppStore(state => state.likeVideo);
+  const collectVideo = useAppStore(state => state.collectVideo);
+
   const [video, setVideo] = useState<Video | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const [isLiked, setIsLiked] = useState(false);
-  const [isCollected, setIsCollected] = useState(false);
   const [isFollowed, setIsFollowed] = useState(false);
-  const [likesCount, setLikesCount] = useState(0);
-  const [collectCount, setCollectCount] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showPlayBtn, setShowPlayBtn] = useState(true);
+  const videoRef = useRef<any>(null);
 
   useEffect(() => {
     const pages = Taro.getCurrentPages();
     const currentPage = pages[pages.length - 1];
     const videoId = (currentPage as any)?.options?.id || 'v1';
 
-    const foundVideo = mockVideos.find(v => v.id === videoId) || mockVideos[0];
+    const foundVideo = videos.find(v => v.id === videoId) || videos[0];
     setVideo(foundVideo);
-    setIsLiked(foundVideo.isLiked || false);
-    setIsCollected(foundVideo.isCollected || false);
     setIsFollowed(foundVideo.isFollowed || false);
-    setLikesCount(foundVideo.likesCount);
-    setCollectCount(foundVideo.collectCount);
 
     setComments(mockComments);
 
     console.log('[VideoDetailPage] videoId:', videoId);
-  }, []);
+  }, [videos]);
+
+  useEffect(() => {
+    if (video && videoRef.current) {
+      videoRef.current.play?.();
+    }
+  }, [video?.id]);
 
   const formatNumber = (num: number): string => {
     if (num >= 10000) {
@@ -46,28 +52,54 @@ const VideoDetailPage: React.FC = () => {
   };
 
   const handleBack = () => {
+    if (videoRef.current) {
+      videoRef.current.pause?.();
+    }
     Taro.navigateBack();
   };
 
+  const handleVideoPlay = () => {
+    setIsPlaying(true);
+    setShowPlayBtn(false);
+  };
+
+  const handleVideoPause = () => {
+    setIsPlaying(false);
+    setShowPlayBtn(true);
+  };
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause?.();
+      } else {
+        videoRef.current.play?.();
+      }
+    }
+  };
+
   const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
-    console.log('[VideoDetailPage] like toggled:', !isLiked);
+    if (video) {
+      likeVideo(video.id);
+      const updated = useAppStore.getState().videos.find(v => v.id === video.id);
+      if (updated) setVideo(updated);
+    }
   };
 
   const handleCollect = () => {
-    setIsCollected(!isCollected);
-    setCollectCount(isCollected ? collectCount - 1 : collectCount + 1);
-    console.log('[VideoDetailPage] collect toggled:', !isCollected);
-    Taro.showToast({
-      title: isCollected ? '已取消收藏' : '收藏成功',
-      icon: 'none',
-    });
+    if (video) {
+      collectVideo(video.id);
+      const updated = useAppStore.getState().videos.find(v => v.id === video.id);
+      if (updated) setVideo(updated);
+      Taro.showToast({
+        title: video.isCollected ? '已取消收藏' : '收藏成功',
+        icon: 'none',
+      });
+    }
   };
 
   const handleFollow = () => {
     setIsFollowed(!isFollowed);
-    console.log('[VideoDetailPage] follow toggled:', !isFollowed);
   };
 
   const handleComment = () => {
@@ -131,12 +163,31 @@ const VideoDetailPage: React.FC = () => {
   return (
     <View className={styles.videoDetailPage}>
       <View className={styles.videoContainer}>
-        <Image
-          className={styles.coverImage}
-          src={video.coverUrl}
-          mode="aspectFill"
-          onError={(e) => console.error('[VideoDetailPage] cover error:', e)}
-        />
+        <View className={styles.videoWrapper} onClick={togglePlay}>
+          <VideoComp
+            ref={videoRef}
+            className={styles.videoPlayer}
+            src={video.videoUrl}
+            poster={video.coverUrl}
+            controls={false}
+            autoplay
+            loop
+            showCenterPlayBtn={false}
+            showFullscreenBtn={false}
+            showPlayBtn={false}
+            showProgress={false}
+            onPlay={handleVideoPlay}
+            onPause={handleVideoPause}
+            onEnded={handleVideoPause}
+          />
+          {showPlayBtn && (
+            <View className={styles.playBtnOverlay}>
+              <View className={styles.playBtn}>
+                <Text>▶</Text>
+              </View>
+            </View>
+          )}
+        </View>
 
         <Button className={styles.backBtn} onClick={handleBack}>
           <Text>←</Text>
@@ -147,10 +198,10 @@ const VideoDetailPage: React.FC = () => {
 
         <View className={styles.sideActions}>
           <View className={styles.actionItem} onClick={handleLike}>
-            <View className={classnames(styles.actionIcon, isLiked && styles.active)}>
-              <Text>{isLiked ? '❤️' : '🤍'}</Text>
+            <View className={classnames(styles.actionIcon, video.isLiked && styles.active)}>
+              <Text>{video.isLiked ? '❤️' : '🤍'}</Text>
             </View>
-            <Text className={styles.actionCount}>{formatNumber(likesCount)}</Text>
+            <Text className={styles.actionCount}>{formatNumber(video.likesCount)}</Text>
           </View>
 
           <View className={styles.actionItem} onClick={handleComment}>
@@ -161,10 +212,10 @@ const VideoDetailPage: React.FC = () => {
           </View>
 
           <View className={styles.actionItem} onClick={handleCollect}>
-            <View className={classnames(styles.actionIcon, isCollected && styles.active)}>
-              <Text>{isCollected ? '⭐' : '☆'}</Text>
+            <View className={classnames(styles.actionIcon, video.isCollected && styles.active)}>
+              <Text>{video.isCollected ? '⭐' : '☆'}</Text>
             </View>
-            <Text className={styles.actionCount}>{formatNumber(collectCount)}</Text>
+            <Text className={styles.actionCount}>{formatNumber(video.collectCount)}</Text>
           </View>
 
           <View className={styles.actionItem} onClick={handleShare}>
@@ -212,6 +263,9 @@ const VideoDetailPage: React.FC = () => {
           </View>
 
           <Text className={styles.videoTitle}>{video.title}</Text>
+          {video.description && (
+            <Text className={styles.videoDesc}>{video.description}</Text>
+          )}
 
           <View className={styles.tagsRow}>
             {video.tags.map((tag, index) => (

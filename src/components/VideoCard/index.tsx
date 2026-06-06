@@ -4,6 +4,7 @@ import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 import { Video } from '@/types';
+import { useAppStore } from '@/store';
 
 interface VideoCardProps {
   video: Video;
@@ -18,11 +19,13 @@ const VideoCard: React.FC<VideoCardProps> = ({
   isActive = false,
   onPlayStateChange,
 }) => {
-  const [isLiked, setIsLiked] = useState(video.isLiked);
-  const [isCollected, setIsCollected] = useState(video.isCollected);
+  const likeVideo = useAppStore(state => state.likeVideo);
+  const collectVideo = useAppStore(state => state.collectVideo);
+  const videos = useAppStore(state => state.videos);
+
+  const currentVideo = videos.find(v => v.id === video.id) || video;
+
   const [isFollowed, setIsFollowed] = useState(video.isFollowed);
-  const [likesCount, setLikesCount] = useState(video.likesCount);
-  const [collectCount, setCollectCount] = useState(video.collectCount);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showPlayBtn, setShowPlayBtn] = useState(true);
   const videoRef = useRef<any>(null);
@@ -92,15 +95,13 @@ const VideoCard: React.FC<VideoCardProps> = ({
   };
 
   const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
-    console.log('[VideoCard] like toggled:', !isLiked);
+    likeVideo(currentVideo.id);
+    console.log('[VideoCard] like toggled:', !currentVideo.isLiked);
   };
 
   const handleCollect = () => {
-    setIsCollected(!isCollected);
-    setCollectCount(isCollected ? collectCount - 1 : collectCount + 1);
-    console.log('[VideoCard] collect toggled:', !isCollected);
+    collectVideo(currentVideo.id);
+    console.log('[VideoCard] collect toggled:', !currentVideo.isCollected);
   };
 
   const handleFollow = () => {
@@ -190,31 +191,31 @@ const VideoCard: React.FC<VideoCardProps> = ({
         </View>
 
         <View className={styles.actionItem} onClick={handleLike}>
-          <View className={classnames(styles.actionIcon, isLiked && styles.active)}>
-            <Text>{isLiked ? '❤️' : '🤍'}</Text>
+          <View className={classnames(styles.actionIcon, currentVideo.isLiked && styles.active)}>
+            <Text>{currentVideo.isLiked ? '❤️' : '🤍'}</Text>
           </View>
-          <Text className={styles.actionCount}>{formatNumber(likesCount)}</Text>
+          <Text className={styles.actionCount}>{formatNumber(currentVideo.likesCount)}</Text>
         </View>
 
         <View className={styles.actionItem} onClick={handleComment}>
           <View className={styles.actionIcon}>
             <Text>💬</Text>
           </View>
-          <Text className={styles.actionCount}>{formatNumber(video.commentsCount)}</Text>
+          <Text className={styles.actionCount}>{formatNumber(currentVideo.commentsCount)}</Text>
         </View>
 
         <View className={styles.actionItem} onClick={handleCollect}>
-          <View className={classnames(styles.actionIcon, isCollected && styles.active)}>
-            <Text>{isCollected ? '⭐' : '☆'}</Text>
+          <View className={classnames(styles.actionIcon, currentVideo.isCollected && styles.active)}>
+            <Text>{currentVideo.isCollected ? '⭐' : '☆'}</Text>
           </View>
-          <Text className={styles.actionCount}>{formatNumber(collectCount)}</Text>
+          <Text className={styles.actionCount}>{formatNumber(currentVideo.collectCount)}</Text>
         </View>
 
         <View className={styles.actionItem} onClick={handleShare}>
           <View className={styles.actionIcon}>
             <Text>↗️</Text>
           </View>
-          <Text className={styles.actionCount}>{formatNumber(video.sharesCount)}</Text>
+          <Text className={styles.actionCount}>{formatNumber(currentVideo.sharesCount)}</Text>
         </View>
       </View>
 
