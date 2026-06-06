@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ScrollView, Button, Progress } from '@tarojs/components';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, Image, ScrollView, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
-import { CreatorTask } from '@/types';
+import { CreatorTask, Challenge, Video } from '@/types';
 import { useAppStore } from '@/store';
+import { mockChallenges } from '@/data/index';
 
 const TaskDetailPage: React.FC = () => {
   const tasks = useAppStore(state => state.tasks);
+  const videos = useAppStore(state => state.videos);
   const claimTask = useAppStore(state => state.claimTask);
+  const currentUser = useAppStore(state => state.currentUser);
+
   const [task, setTask] = useState<CreatorTask | null>(null);
+  const [taskChallenges, setTaskChallenges] = useState<Challenge[]>([]);
 
   useEffect(() => {
     const pages = Taro.getCurrentPages();
@@ -23,13 +28,35 @@ const TaskDetailPage: React.FC = () => {
       const found = tasks.find(t => t.id === taskId);
       if (found) {
         setTask(found);
+        const challenges = mockChallenges.filter(c => found.challengeIds?.includes(c.id));
+        setTaskChallenges(challenges);
       } else {
         setTask(tasks[0]);
+        const challenges = mockChallenges.filter(c => tasks[0].challengeIds?.includes(c.id));
+        setTaskChallenges(challenges);
       }
     } else {
       setTask(tasks[0]);
+      const challenges = mockChallenges.filter(c => tasks[0].challengeIds?.includes(c.id));
+      setTaskChallenges(challenges);
     }
   }, [tasks]);
+
+  const submittedVideos = useMemo(() => {
+    if (!task || task.challengeIds?.length === 0) return [];
+    return videos.filter(v => {
+      if (v.author.id !== currentUser.id) return false;
+      const videoChallengeIds = v.challenges?.map(c => c.id) || (v.challenge ? [v.challenge.id] : []);
+      return task.challengeIds?.some(cid => videoChallengeIds.includes(cid));
+    });
+  }, [task, videos, currentUser.id]);
+
+  const remainingCount = useMemo(() => {
+    if (!task) return 0;
+    const required = task.requiredCount || 2;
+    const completed = Math.floor((task.progress / 100) * required);
+    return Math.max(required - completed, 0);
+  }, [task]);
 
   const handleClaim = () => {
     if (!task) return;
@@ -41,6 +68,16 @@ const TaskDetailPage: React.FC = () => {
 
   const handleBack = () => {
     Taro.navigateBack();
+  };
+
+  const handleVideoClick = (videoId: string) => {
+    Taro.navigateTo({
+      url: '/pages/video-detail/index?id=' + videoId,
+    });
+  };
+
+  const handleGoPublish = () => {
+    Taro.switchTab({ url: '/pages/shoot/index' });
   };
 
   if (!task) {
@@ -88,7 +125,7 @@ const TaskDetailPage: React.FC = () => {
               )}
             >
               <Text>
-                {isCompleted ? '已完成' : (isOngoing ? '进行中' : '待领取')}
+                {isCompleted ? '已完成' : (isOngoing ? '进行中' : '可领取')}
               </Text>
             </View>
           </View>
@@ -96,9 +133,7 @@ const TaskDetailPage: React.FC = () => {
           {!canClaim && (
             <View className={styles.progressRow}>
               <Text className={styles.progressLabel}>完成进度</Text>
-              <View className={styles.progressValue}>
-                <Text>{task.progress}%</Text>
-              </View>
+              <Text className={styles.progressValue}>{task.progress}%</Text>
             </View>
           )}
 
@@ -111,23 +146,77 @@ const TaskDetailPage: React.FC = () => {
             </View>
           )}
 
+          {isOngoing && (
+            <Text className={styles.remainingText}>
+              还差 {remainingCount} 条视频即可完成任务
+            </Text>
+          )}
+
           <View className={styles.deadlineRow}>
             <Text className={styles.deadlineLabel}>截止时间</Text>
             <Text className={styles.deadlineValue}>📅 {task.deadline}</Text>
           </View>
         </View>
 
-        <View className={styles.descCard}>
+        {taskChallenges.length > 0 && (
+          <View className={styles.sectionCard}>
+            <Text className={styles.sectionTitle}>关联话题</Text>
+            <View className={styles.challengeList}>
+              {taskChallenges.map(c => (
+                <View key={c.id} className={styles.challengeTag}>
+                  <Text>{c.tag}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        <View className={styles.sectionCard}>
+          <View className={styles.sectionHeader}>
+            <Text className={styles.sectionTitle}>已投稿视频</Text>
+            <Text className={styles.sectionCount}>{submittedVideos.length} 条</Text>
+          </View>
+          {submittedVideos.length === 0 ? (
+            <View className={styles.emptyVideos}>
+              <Text className={styles.emptyIcon}>🎬</Text>
+              <Text className={styles.emptyText}>还没有投稿视频</Text>
+            </View>
+          ) : (
+            <View className={styles.videoRow}>
+              {submittedVideos.map(video => (
+                <View
+                  key={video.id}
+                  className={styles.videoItem}
+                  onClick={() => handleVideoClick(video.id)}
+                >
+                  <Image
+                    className={styles.videoCover}
+                    src={video.coverUrl}
+                    mode="aspectFill"
+                  />
+                  <Text className={styles.videoTitle} numberOfLines={2}>
+                    {video.title}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+
+        <View className={styles.sectionCard}>
           <Text className={styles.sectionTitle}>任务描述</Text>
           <Text className={styles.descText}>{task.description}</Text>
         </View>
 
-        <View className={styles.ruleCard}>
+        <View className={styles.sectionCard}>
           <Text className={styles.sectionTitle}>任务规则</Text>
           <View className={styles.ruleList}>
             <View className={styles.ruleItem}>
               <Text className={styles.ruleDot}>•</Text>
-              <Text className={styles.ruleText}>发布视频需带有指定话题标签</Text>
+              <Text className={styles.ruleText}>
+                发布视频需带有指定话题标签
+                {taskChallenges.length > 0 && `（${taskChallenges.map(c => c.tag).join('、')}）`}
+              </Text>
             </View>
             <View className={styles.ruleItem}>
               <Text className={styles.ruleDot}>•</Text>
@@ -139,7 +228,7 @@ const TaskDetailPage: React.FC = () => {
             </View>
             <View className={styles.ruleItem}>
               <Text className={styles.ruleDot}>•</Text>
-              <Text className={styles.ruleText}>完成后7个工作日内发放奖励</Text>
+              <Text className={styles.ruleText}>共需发布 {task.requiredCount || 2} 条视频完成任务</Text>
             </View>
           </View>
         </View>
@@ -152,7 +241,7 @@ const TaskDetailPage: React.FC = () => {
           </View>
         )}
         {isOngoing && (
-          <View className={styles.goShootBtn} onClick={() => Taro.switchTab({ url: '/pages/shoot/index' })}>
+          <View className={styles.goShootBtn} onClick={handleGoPublish}>
             <Text>去发布视频</Text>
           </View>
         )}

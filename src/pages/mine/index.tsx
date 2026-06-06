@@ -117,6 +117,11 @@ const MinePage: React.FC = () => {
               mode="aspectFill"
             />
             <View className={styles.gridInfo}>
+              <Text className={styles.gridTag}>
+                {video.challenges?.[0]?.tag ||
+                  video.challenge?.tag ||
+                  (video.tags?.[0] ? `#${video.tags[0]}` : '')}
+              </Text>
               <Text className={styles.gridViews}>▶ {formatNumber(video.viewsCount)}</Text>
             </View>
           </View>

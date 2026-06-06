@@ -186,21 +186,35 @@ const ShootPage: React.FC = () => {
       return;
     }
 
-    const { addDraft, updateDraft } = useAppStore.getState();
-    const draftData = {
-      id: draftId || 'draft_' + Date.now(),
-      coverUrl: 'https://picsum.photos/id/237/400/700',
-      title: '',
-      segments,
-      subtitles,
-      stickers,
-      updatedAt: new Date().toLocaleString('zh-CN'),
-      duration: segments.reduce((a, b) => a + b, 0),
-    } as any;
+    const { addDraft, updateDraft, drafts } = useAppStore.getState();
 
     if (draftId) {
+      const existingDraft = drafts.find(d => d.id === draftId);
+      const draftData = {
+        id: draftId,
+        coverUrl: existingDraft?.coverUrl || 'https://picsum.photos/id/237/400/700',
+        title: existingDraft?.title || '',
+        description: existingDraft?.description || '',
+        shopId: existingDraft?.shopId,
+        challengeIds: existingDraft?.challengeIds || [],
+        segments,
+        subtitles,
+        stickers,
+        updatedAt: new Date().toLocaleString('zh-CN'),
+        duration: segments.reduce((a, b) => a + b, 0),
+      } as any;
       updateDraft(draftId, draftData);
     } else {
+      const draftData = {
+        id: 'draft_' + Date.now(),
+        coverUrl: 'https://picsum.photos/id/237/400/700',
+        title: '',
+        segments,
+        subtitles,
+        stickers,
+        updatedAt: new Date().toLocaleString('zh-CN'),
+        duration: segments.reduce((a, b) => a + b, 0),
+      } as any;
       addDraft(draftData);
       setDraftId(draftData.id);
     }
@@ -209,7 +223,7 @@ const ShootPage: React.FC = () => {
       title: '已保存到草稿箱',
       icon: 'success',
     });
-    console.log('[ShootPage] saved to draft:', draftData.id);
+    console.log('[ShootPage] saved to draft:', draftId || 'new');
   };
 
   const handleSelectTemplate = (id: number) => {

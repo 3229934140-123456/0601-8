@@ -3,6 +3,7 @@ import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
 import { useAppStore } from '@/store';
+import { mockChallenges } from '@/data/index';
 
 const tabs = [
   { key: 'pending', label: '可领取' },
@@ -18,6 +19,16 @@ const TaskListPage: React.FC = () => {
   const filteredTasks = useMemo(() => {
     return tasks.filter(t => t.status === activeTab);
   }, [tasks, activeTab]);
+
+  const getRemainingCount = (task: typeof tasks[0]) => {
+    const required = task.requiredCount || 2;
+    const completed = Math.floor((task.progress / 100) * required);
+    return Math.max(required - completed, 0);
+  };
+
+  const getTaskChallenges = (task: typeof tasks[0]) => {
+    return mockChallenges.filter(c => task.challengeIds?.includes(c.id));
+  };
 
   const handleTaskClick = (taskId: string) => {
     Taro.navigateTo({
@@ -109,10 +120,16 @@ const TaskListPage: React.FC = () => {
                         />
                       </View>
                       <Text className={styles.progressHint}>
-                        还需发布 {Math.ceil((100 - task.progress) / 50)} 条相关视频
+                        还差 {getRemainingCount(task)} 条视频完成
                       </Text>
                     </View>
                   )}
+
+                  <View className={styles.taskChallengeTags}>
+                    {getTaskChallenges(task).slice(0, 2).map(c => (
+                      <Text key={c.id} className={styles.challengeTag}>{c.tag}</Text>
+                    ))}
+                  </View>
 
                   <View className={styles.taskAction}>
                     {activeTab === 'pending' && (

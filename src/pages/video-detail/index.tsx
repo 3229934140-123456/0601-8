@@ -8,10 +8,13 @@ import { useAppStore } from '@/store';
 
 const VideoDetailPage: React.FC = () => {
   const videos = useAppStore(state => state.videos);
+  const videoComments = useAppStore(state => state.videoComments);
   const likeVideo = useAppStore(state => state.likeVideo);
   const collectVideo = useAppStore(state => state.collectVideo);
   const addComment = useAppStore(state => state.addComment);
-  const getComments = useAppStore(state => state.getComments);
+  const likeComment = useAppStore(state => state.likeComment);
+  const unlikeComment = useAppStore(state => state.unlikeComment);
+  const addRecentView = useAppStore(state => state.addRecentView);
   const currentUser = useAppStore(state => state.currentUser);
 
   const [video, setVideo] = useState<Video | null>(null);
@@ -24,10 +27,10 @@ const VideoDetailPage: React.FC = () => {
 
   const comments = useMemo(() => {
     if (video) {
-      return getComments(video.id);
+      return videoComments[video.id] || [];
     }
     return [];
-  }, [video?.id, getComments]);
+  }, [video?.id, videoComments]);
 
   const challengeTags = useMemo(() => {
     if (!video) return [];
@@ -49,8 +52,12 @@ const VideoDetailPage: React.FC = () => {
     setVideo(foundVideo);
     setIsFollowed(foundVideo.isFollowed || false);
 
+    if (foundVideo) {
+      addRecentView(foundVideo.id);
+    }
+
     console.log('[VideoDetailPage] videoId:', videoId);
-  }, [videos]);
+  }, [videos, addRecentView]);
 
   useEffect(() => {
     if (video && videoRef.current) {
@@ -180,10 +187,15 @@ const VideoDetailPage: React.FC = () => {
   };
 
   const handleCommentLike = (commentId: string) => {
-    const updated = comments.map(c =>
-      c.id === commentId ? { ...c, isLiked: !c.isLiked, likesCount: c.isLiked ? c.likesCount - 1 : c.likesCount + 1 } : c
-    );
-    setComments(updated);
+    if (!video) return;
+    const comment = comments.find(c => c.id === commentId);
+    if (!comment) return;
+
+    if (comment.isLiked) {
+      unlikeComment(video.id, commentId);
+    } else {
+      likeComment(video.id, commentId);
+    }
   };
 
   if (!video) {

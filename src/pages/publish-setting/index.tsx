@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Textarea, Input, Image, ScrollView, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 import { mockShops, mockChallenges, mockUsers } from '@/data/index';
-import { Shop, Challenge, Video, Subtitle, Sticker, DraftVideo } from '@/types';
+import { Shop, Challenge, Video, Subtitle, Sticker, DraftVideo, CreatorTask } from '@/types';
 import { useAppStore } from '@/store';
 
 const PublishSettingPage: React.FC = () => {
   const addVideo = useAppStore(state => state.addVideo);
   const addDraft = useAppStore(state => state.addDraft);
   const updateDraft = useAppStore(state => state.updateDraft);
+  const tasks = useAppStore(state => state.tasks);
   const currentUser = useAppStore(state => state.currentUser);
 
   const [title, setTitle] = useState('');
@@ -84,6 +85,21 @@ const PublishSettingPage: React.FC = () => {
         });
       }
     }
+  };
+
+  const matchedTasks = useMemo(() => {
+    if (selectedChallenges.length === 0) return [];
+    const selectedIds = selectedChallenges.map(c => c.id);
+    return tasks.filter(t =>
+      t.status === 'ongoing' &&
+      t.challengeIds?.some(cid => selectedIds.includes(cid))
+    );
+  }, [selectedChallenges, tasks]);
+
+  const getTaskRemaining = (task: CreatorTask) => {
+    const required = task.requiredCount || 2;
+    const completed = Math.floor((task.progress / 100) * required);
+    return Math.max(required - completed, 0);
   };
 
   const handlePublish = () => {
@@ -277,6 +293,30 @@ const PublishSettingPage: React.FC = () => {
             </View>
           )}
         </View>
+
+        {matchedTasks.length > 0 && (
+          <View className={styles.taskHintSection}>
+            <View className={styles.taskHintHeader}>
+              <Text className={styles.taskHintTitle}>📋 关联任务</Text>
+            </View>
+            {matchedTasks.map(task => (
+              <View key={task.id} className={styles.taskHintItem}>
+                <View className={styles.taskHintInfo}>
+                  <Text className={styles.taskHintName}>{task.title}</Text>
+                  <Text className={styles.taskHintProgress}>
+                    还差 {getTaskRemaining(task)} 条完成
+                  </Text>
+                </View>
+                <View className={styles.taskHintBar}>
+                  <View
+                    className={styles.taskHintFill}
+                    style={{ width: `${task.progress}%` }}
+                  />
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
 
         <View className={styles.section}>
           <View className={styles.sectionHeader} onClick={handleSaveDraftToggle}>

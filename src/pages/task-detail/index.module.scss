@@ -159,6 +159,13 @@
   transition: width 0.3s;
 }
 
+.remainingText {
+  font-size: 26rpx;
+  color: $color-secondary;
+  margin-bottom: 16rpx;
+  font-weight: $font-weight-medium;
+}
+
 .deadlineRow {
   display: flex;
   align-items: center;
@@ -177,11 +184,18 @@
   color: $color-text-primary;
 }
 
-.descCard, .ruleCard {
+.sectionCard {
   background: $color-bg-white;
   border-radius: $radius-lg;
   padding: 24rpx;
   margin-bottom: 20rpx;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
 }
 
 .sectionTitle {
@@ -192,10 +206,75 @@
   display: block;
 }
 
+.sectionCount {
+  font-size: 26rpx;
+  color: $color-text-tertiary;
+}
+
+.challengeList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.challengeTag {
+  padding: 10rpx 20rpx;
+  background: rgba($color-primary, 0.08);
+  border-radius: $radius-round;
+  font-size: 26rpx;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
 .descText {
   font-size: 28rpx;
   color: $color-text-secondary;
   line-height: 1.6;
+}
+
+.emptyVideos {
+  padding: 40rpx;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 64rpx;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.emptyText {
+  font-size: 26rpx;
+  color: $color-text-tertiary;
+}
+
+.videoRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.videoItem {
+  width: calc((100% - 32rpx) / 3);
+  flex-shrink: 0;
+}
+
+.videoCover {
+  width: 100%;
+  height: 180rpx;
+  border-radius: $radius-md;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.videoTitle {
+  font-size: 22rpx;
+  color: $color-text-primary;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .ruleList {

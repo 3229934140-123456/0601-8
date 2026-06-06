@@ -187,6 +187,14 @@ const ShopDetailPage: React.FC = () => {
               />
               <View className={styles.videoInfo}>
                 <Text className={styles.videoTitle} numberOfLines={2}>{video.title}</Text>
+                <View className={styles.videoTags}>
+                  {video.challenges?.slice(0, 2).map((c, i) => (
+                    <Text key={i} className={styles.videoTag}>{c.tag}</Text>
+                  ))}
+                  {!video.challenges?.length && video.challenge && (
+                    <Text className={styles.videoTag}>{video.challenge.tag}</Text>
+                  )}
+                </View>
                 <Text className={styles.videoViews}>▶ {formatNumber(video.viewsCount)}</Text>
               </View>
             </View>

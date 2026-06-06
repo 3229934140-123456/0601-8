@@ -163,7 +163,25 @@
 
 .progressHint {
   font-size: 20rpx;
-  color: $color-text-tertiary;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
+.taskChallengeTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+  margin-top: 12rpx;
+}
+
+.challengeTag {
+  font-size: 22rpx;
+  color: $color-primary;
+  background: rgba($color-primary, 0.08);
+  padding: 4rpx 12rpx;
+  border-radius: 6rpx;
+  max-width: 100%;
+  @include text-ellipsis;
 }
 
 .taskAction {

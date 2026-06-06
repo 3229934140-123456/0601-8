@@ -48,6 +48,8 @@ interface AppState {
 
   addComment: (videoId: string, comment: Comment) => void;
   getComments: (videoId: string) => Comment[];
+  likeComment: (videoId: string, commentId: string) => void;
+  unlikeComment: (videoId: string, commentId: string) => void;
 
   getVideosByShop: (shopId: string) => Video[];
   getMyVideos: () => Video[];
@@ -265,6 +267,40 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   getComments: (videoId) => {
     return get().videoComments[videoId] || [];
+  },
+
+  likeComment: (videoId, commentId) => {
+    set(state => {
+      const comments = state.videoComments[videoId] || [];
+      const updated = comments.map(c =>
+        c.id === commentId
+          ? { ...c, likesCount: c.likesCount + 1, isLiked: true }
+          : c
+      );
+      return {
+        videoComments: {
+          ...state.videoComments,
+          [videoId]: updated,
+        },
+      };
+    });
+  },
+
+  unlikeComment: (videoId, commentId) => {
+    set(state => {
+      const comments = state.videoComments[videoId] || [];
+      const updated = comments.map(c =>
+        c.id === commentId
+          ? { ...c, likesCount: Math.max(c.likesCount - 1, 0), isLiked: false }
+          : c
+      );
+      return {
+        videoComments: {
+          ...state.videoComments,
+          [videoId]: updated,
+        },
+      };
+    });
   },
 
   getVideosByShop: (shopId) => {

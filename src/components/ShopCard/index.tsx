@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, Image, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 import { Shop } from '@/types';
+import { useAppStore } from '@/store';
 
 interface ShopCardProps {
   shop: Shop;
@@ -11,7 +12,10 @@ interface ShopCardProps {
 }
 
 const ShopCard: React.FC<ShopCardProps> = ({ shop, onClick }) => {
-  const [isCollected, setIsCollected] = useState(shop.isCollected);
+  const collectedShops = useAppStore(state => state.collectedShops);
+  const collectShop = useAppStore(state => state.collectShop);
+
+  const isCollected = collectedShops.includes(shop.id);
 
   const handleCardClick = () => {
     if (onClick) {
@@ -25,8 +29,7 @@ const ShopCard: React.FC<ShopCardProps> = ({ shop, onClick }) => {
 
   const handleCollect = (e) => {
     e.stopPropagation();
-    setIsCollected(!isCollected);
-    console.log('[ShopCard] collect toggled:', !isCollected);
+    collectShop(shop.id);
     Taro.showToast({
       title: isCollected ? '已取消收藏' : '收藏成功',
       icon: 'none',
