@@ -11,6 +11,13 @@ export default defineAppConfig({
     'pages/shop-detail/index',
     'pages/user-profile/index',
     'pages/search/index',
+    'pages/publish-setting/index',
+    'pages/chat/index',
+    'pages/booking-detail/index',
+    'pages/draft-box/index',
+    'pages/collection-manage/index',
+    'pages/business-info/index',
+    'pages/task-detail/index',
   ],
   window: {
     backgroundTextStyle: 'light',

@@ -1,0 +1,259 @@
+@use '@/styles/variables.scss' as *;
+
+.taskPage {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: $color-bg-page;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 88rpx;
+  padding: 0 24rpx;
+  background: $color-bg-white;
+  border-bottom: 1rpx solid $color-border-light;
+}
+
+.backBtn {
+  width: 56rpx;
+  height: 56rpx;
+  font-size: 36rpx;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 34rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.placeholder {
+  width: 56rpx;
+}
+
+.content {
+  flex: 1;
+  padding: 24rpx;
+}
+
+.taskHeader {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  background: $color-bg-white;
+  border-radius: $radius-lg;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.taskCover {
+  width: 160rpx;
+  height: 120rpx;
+  border-radius: $radius-md;
+  flex-shrink: 0;
+}
+
+.taskInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.taskTitle {
+  font-size: 32rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.rewardBadge {
+  display: inline-block;
+  padding: 8rpx 20rpx;
+  background: linear-gradient(135deg, rgba(255, 176, 32, 0.1), rgba(255, 46, 99, 0.1));
+  border-radius: $radius-round;
+  font-size: 24rpx;
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.statusCard {
+  background: $color-bg-white;
+  border-radius: $radius-lg;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.statusLabel {
+  font-size: 28rpx;
+  color: $color-text-secondary;
+}
+
+.statusBadge {
+  padding: 8rpx 24rpx;
+  border-radius: $radius-round;
+  font-size: 26rpx;
+  font-weight: $font-weight-medium;
+
+  &.pending {
+    background: rgba(255, 176, 32, 0.1);
+    color: $color-gold;
+  }
+
+  &.ongoing {
+    background: rgba(8, 217, 214, 0.1);
+    color: $color-secondary;
+  }
+
+  &.completed {
+    background: rgba(26, 188, 156, 0.1);
+    color: $color-success;
+  }
+}
+
+.progressRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.progressLabel {
+  font-size: 26rpx;
+  color: $color-text-secondary;
+}
+
+.progressValue {
+  font-size: 32rpx;
+  font-weight: $font-weight-bold;
+  color: $color-primary;
+}
+
+.progressBar {
+  height: 12rpx;
+  background: $color-bg-gray;
+  border-radius: $radius-round;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, $color-primary, $color-secondary);
+  border-radius: $radius-round;
+  transition: width 0.3s;
+}
+
+.deadlineRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16rpx;
+  border-top: 1rpx solid $color-border-light;
+}
+
+.deadlineLabel {
+  font-size: 26rpx;
+  color: $color-text-secondary;
+}
+
+.deadlineValue {
+  font-size: 26rpx;
+  color: $color-text-primary;
+}
+
+.descCard, .ruleCard {
+  background: $color-bg-white;
+  border-radius: $radius-lg;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.sectionTitle {
+  font-size: 30rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.descText {
+  font-size: 28rpx;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.ruleList {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.ruleItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+}
+
+.ruleDot {
+  font-size: 28rpx;
+  color: $color-primary;
+  flex-shrink: 0;
+}
+
+.ruleText {
+  flex: 1;
+  font-size: 26rpx;
+  color: $color-text-secondary;
+  line-height: 1.5;
+}
+
+.footer {
+  padding: 20rpx 24rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  background: $color-bg-white;
+  border-top: 1rpx solid $color-border-light;
+}
+
+.claimBtn {
+  height: 88rpx;
+  background: linear-gradient(135deg, $color-primary, $color-secondary);
+  border-radius: $radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+}
+
+.completedBtn {
+  background: linear-gradient(135deg, $color-success, lighten($color-success, 10%));
+}
+
+.goShootBtn {
+  height: 88rpx;
+  background: linear-gradient(135deg, $color-secondary, $color-primary);
+  border-radius: $radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+}

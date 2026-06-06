@@ -1,0 +1,152 @@
+@use '@/styles/variables.scss' as *;
+
+.businessPage {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: $color-bg-page;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 88rpx;
+  padding: 0 24rpx;
+  background: $color-bg-white;
+  border-bottom: 1rpx solid $color-border-light;
+}
+
+.backBtn {
+  width: 56rpx;
+  height: 56rpx;
+  font-size: 36rpx;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 34rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.editBtn, .saveBtn {
+  font-size: 28rpx;
+  color: $color-primary;
+}
+
+.content {
+  flex: 1;
+  padding: 24rpx;
+}
+
+.infoCard {
+  background: $color-bg-white;
+  border-radius: $radius-lg;
+  padding: 8rpx 24rpx;
+}
+
+.infoItem {
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid $color-border-light;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.label {
+  font-size: 26rpx;
+  color: $color-text-tertiary;
+  margin-bottom: 12rpx;
+  display: block;
+}
+
+.value {
+  font-size: 30rpx;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.descText {
+  font-size: 28rpx;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.input {
+  width: 100%;
+  height: 72rpx;
+  font-size: 30rpx;
+  color: $color-text-primary;
+  background: $color-bg-gray;
+  border-radius: $radius-md;
+  padding: 0 20rpx;
+}
+
+.textarea {
+  width: 100%;
+  font-size: 28rpx;
+  color: $color-text-primary;
+  background: $color-bg-gray;
+  border-radius: $radius-md;
+  padding: 16rpx 20rpx;
+  line-height: 1.5;
+  min-height: 120rpx;
+}
+
+.timeInputRow {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.timeInput {
+  flex: 1;
+  height: 72rpx;
+  font-size: 30rpx;
+  color: $color-text-primary;
+  background: $color-bg-gray;
+  border-radius: $radius-md;
+  padding: 0 20rpx;
+  text-align: center;
+}
+
+.timeDivider {
+  font-size: 28rpx;
+  color: $color-text-secondary;
+}
+
+.actionRow {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 32rpx;
+}
+
+.actionBtn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: $radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  font-weight: $font-weight-semibold;
+
+  &.cancel {
+    background: $color-bg-white;
+    color: $color-text-secondary;
+    border: 2rpx solid $color-border-light;
+  }
+
+  &.confirm {
+    background: linear-gradient(135deg, $color-primary, $color-secondary);
+    color: $color-text-white;
+  }
+}

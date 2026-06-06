@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, Image, Button } from '@tarojs/components';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, Image, Button, Video as VideoComp } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
@@ -8,14 +8,34 @@ import { Video } from '@/types';
 interface VideoCardProps {
   video: Video;
   showTopBar?: boolean;
+  isActive?: boolean;
+  onPlayStateChange?: (playing: boolean) => void;
 }
 
-const VideoCard: React.FC<VideoCardProps> = ({ video, showTopBar = true }) => {
+const VideoCard: React.FC<VideoCardProps> = ({
+  video,
+  showTopBar = true,
+  isActive = false,
+  onPlayStateChange,
+}) => {
   const [isLiked, setIsLiked] = useState(video.isLiked);
   const [isCollected, setIsCollected] = useState(video.isCollected);
   const [isFollowed, setIsFollowed] = useState(video.isFollowed);
   const [likesCount, setLikesCount] = useState(video.likesCount);
   const [collectCount, setCollectCount] = useState(video.collectCount);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showPlayBtn, setShowPlayBtn] = useState(true);
+  const videoRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (isActive && isPlaying && videoRef.current) {
+      videoRef.current.play?.();
+    }
+    if (!isActive && isPlaying && videoRef.current) {
+      videoRef.current.pause?.();
+      setIsPlaying(false);
+    }
+  }, [isActive]);
 
   const formatNumber = (num: number): string => {
     if (num >= 10000) {
@@ -28,9 +48,47 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, showTopBar = true }) => {
   };
 
   const formatDuration = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
+ const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause?.();
+        setIsPlaying(false);
+        setShowPlayBtn(true);
+        onPlayStateChange?.(false);
+      } else {
+        videoRef.current.play?.();
+        setIsPlaying(true);
+        setShowPlayBtn(false);
+        onPlayStateChange?.(true);
+      }
+    }
+    console.log('[VideoCard] toggle play:', !isPlaying);
+  };
+
+  const handleVideoPlay = () => {
+    setIsPlaying(true);
+    setShowPlayBtn(false);
+    onPlayStateChange?.(true);
+    console.log('[VideoCard] video play event');
+  };
+
+  const handleVideoPause = () => {
+    setIsPlaying(false);
+    setShowPlayBtn(true);
+    onPlayStateChange?.(false);
+    console.log('[VideoCard] video pause event');
+  };
+
+  const handleVideoEnded = () => {
+    setIsPlaying(false);
+    setShowPlayBtn(true);
+    onPlayStateChange?.(false);
+    console.log('[VideoCard] video ended event');
   };
 
   const handleLike = () => {
@@ -59,9 +117,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, showTopBar = true }) => {
   };
 
   const handleComment = () => {
-    Taro.showToast({
-      title: '评论功能开发中',
-      icon: 'none',
+    Taro.navigateTo({
+      url: '/pages/video-detail/index?id=' + video.id,
     });
   };
 
@@ -76,6 +133,10 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, showTopBar = true }) => {
     Taro.navigateTo({
       url: '/pages/user-profile/index?id=' + video.author.id,
     });
+  };
+
+  const handleVideoError = (e) => {
+    console.error('[VideoCard] video error:', e);
   };
 
   return (
@@ -93,12 +154,33 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, showTopBar = true }) => {
         </View>
       )}
 
-      <Image
-        className={styles.coverImage}
-        src={video.coverUrl}
-        mode="aspectFill"
-        onError={(e) => console.error('[VideoCard] image error:', e)}
-      />
+      <View className={styles.videoWrapper} onClick={togglePlay}>
+        <VideoComp
+          ref={videoRef}
+          className={styles.videoPlayer}
+          src={video.videoUrl}
+          poster={video.coverUrl}
+          controls={false}
+          autoplay={false}
+          loop={false}
+          showCenterPlayBtn={false}
+          showFullscreenBtn={false}
+          showPlayBtn={false}
+          showProgress={false}
+          onPlay={handleVideoPlay}
+          onPause={handleVideoPause}
+          onEnded={handleVideoEnded}
+          onError={handleVideoError}
+        />
+
+        {showPlayBtn && (
+          <View className={styles.playBtnOverlay}>
+            <View className={styles.playBtn}>
+              <Text>▶</Text>
+            </View>
+          </View>
+        )}
+      </View>
 
       <View className={styles.durationTag}>{formatDuration(video.duration)}</View>
 

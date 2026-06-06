@@ -32,9 +32,12 @@ const MessagePage: React.FC = () => {
   const handleMessageClick = (message: Message) => {
     console.log('[MessagePage] message clicked:', message.id);
     if (message.type === 'chat' && message.targetId) {
-      Taro.showToast({
-        title: '聊天功能开发中',
-        icon: 'none',
+      Taro.navigateTo({
+        url: `/pages/chat/index?userId=${message.targetId}`,
+      });
+    } else if (message.type === 'booking' && message.targetId) {
+      Taro.navigateTo({
+        url: `/pages/booking-detail/index?id=${message.targetId}`,
       });
     } else {
       Taro.showToast({

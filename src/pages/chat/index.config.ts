@@ -1,0 +1,5 @@
+export default definePageConfig({
+  navigationBarTitleText: '聊天',
+  navigationBarBackgroundColor: '#ffffff',
+  navigationBarTextStyle: 'black',
+});

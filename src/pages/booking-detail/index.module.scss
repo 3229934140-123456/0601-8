@@ -1,0 +1,205 @@
+@use '@/styles/variables.scss' as *;
+
+.bookingPage {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: $color-bg-page;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 88rpx;
+  padding: 0 24rpx;
+  background: $color-bg-white;
+  border-bottom: 1rpx solid $color-border-light;
+}
+
+.backBtn {
+  width: 56rpx;
+  height: 56rpx;
+  font-size: 36rpx;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 34rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.placeholder {
+  width: 56rpx;
+}
+
+.content {
+  flex: 1;
+  padding: 24rpx;
+}
+
+.shopCard {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  background: $color-bg-white;
+  border-radius: $radius-lg;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.shopIcon {
+  width: 96rpx;
+  height: 96rpx;
+  background: linear-gradient(135deg, $color-primary, $color-secondary);
+  border-radius: $radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+}
+
+.shopInfo {
+  flex: 1;
+}
+
+.shopName {
+  font-size: 32rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.shopAddr {
+  font-size: 26rpx;
+  color: $color-text-secondary;
+  display: block;
+}
+
+.infoSection {
+  background: $color-bg-white;
+  border-radius: $radius-lg;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid $color-border-light;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.infoLabel {
+  font-size: 28rpx;
+  color: $color-text-secondary;
+}
+
+.infoValue {
+  font-size: 28rpx;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.contactRow {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.contactAvatar {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: $radius-round;
+}
+
+.contactName {
+  font-size: 28rpx;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.remarkSection {
+  background: $color-bg-white;
+  border-radius: $radius-lg;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.sectionTitle {
+  font-size: 28rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.remarkText {
+  font-size: 28rpx;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.statusBanner {
+  padding: 24rpx;
+  border-radius: $radius-lg;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: $font-weight-semibold;
+  background: rgba(255, 176, 32, 0.1);
+  color: $color-gold;
+  margin-top: 24rpx;
+
+  &.accepted {
+    background: rgba(26, 188, 156, 0.1);
+    color: $color-success;
+  }
+
+  &.rejected {
+    background: rgba(255, 71, 87, 0.1);
+    color: $color-error;
+  }
+}
+
+.footer {
+  display: flex;
+  gap: 20rpx;
+  padding: 24rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  background: $color-bg-white;
+  border-top: 1rpx solid $color-border-light;
+}
+
+.footerBtn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: $radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  font-weight: $font-weight-semibold;
+
+  &.reject {
+    background: $color-bg-gray;
+    color: $color-text-secondary;
+  }
+
+  &.accept, &.chat {
+    background: linear-gradient(135deg, $color-primary, $color-secondary);
+    color: $color-text-white;
+  }
+}

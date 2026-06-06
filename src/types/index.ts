@@ -147,3 +147,68 @@ export interface Category {
   name: string;
   icon?: string;
 }
+
+// 聊天消息类型
+export interface ChatMessage {
+  id: string;
+  senderId: string;
+  content: string;
+  time: string;
+  isMine: boolean;
+  type?: 'text' | 'image' | 'booking';
+  bookingId?: string;
+}
+
+// 约拍详情类型
+export interface BookingDetail {
+  id: string;
+  shopName: string;
+  shopAddress: string;
+  date: string;
+  time: string;
+  budget: string;
+  remark: string;
+  status: 'pending' | 'accepted' | 'rejected' | 'completed';
+  contact: string;
+  contactAvatar: string;
+}
+
+// 营业信息类型
+export interface BusinessInfo {
+  shopName: string;
+  phone: string;
+  businessHours: string;
+  address: string;
+  description: string;
+}
+
+// 字幕类型
+export interface Subtitle {
+  id: string;
+  text: string;
+  x: number;
+  y: number;
+  fontSize: number;
+  color: string;
+}
+
+// 贴纸类型
+export interface Sticker {
+  id: string;
+  emoji: string;
+  x: number;
+  y: number;
+  scale: number;
+}
+
+// 草稿视频类型
+export interface DraftVideo {
+  id: string;
+  coverUrl: string;
+  title?: string;
+  segments: number[];
+  subtitles: Subtitle[];
+  stickers: Sticker[];
+  updatedAt: string;
+  duration: number;
+}

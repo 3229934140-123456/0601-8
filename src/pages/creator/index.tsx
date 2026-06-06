@@ -33,33 +33,40 @@ const CreatorPage: React.FC = () => {
 
   const handleQuickAction = (actionId: string) => {
     console.log('[CreatorPage] quick action:', actionId);
-    Taro.showToast({
-      title: `${actionId}功能开发中`,
-      icon: 'none',
-    });
+    const routeMap: Record<string, string> = {
+      draft: '/pages/draft-box/index',
+      collection: '/pages/collection-manage/index',
+      shop: '/pages/business-info/index',
+      task: '/pages/task-detail/index',
+    };
+    if (routeMap[actionId]) {
+      Taro.navigateTo({ url: routeMap[actionId] });
+    } else {
+      Taro.showToast({
+        title: `${actionId}功能开发中`,
+        icon: 'none',
+      });
+    }
   };
 
   const handleTaskClick = (taskId: string) => {
     console.log('[CreatorPage] task clicked:', taskId);
-    Taro.showToast({
-      title: '任务详情',
-      icon: 'none',
+    Taro.navigateTo({
+      url: `/pages/task-detail/index?id=${taskId}`,
     });
   };
 
   const handleDraftClick = (draftId: string) => {
     console.log('[CreatorPage] draft clicked:', draftId);
-    Taro.showToast({
-      title: '编辑草稿',
-      icon: 'none',
+    Taro.navigateTo({
+      url: `/pages/draft-box/index?id=${draftId}`,
     });
   };
 
   const handleCollectionClick = (collectionId: string) => {
     console.log('[CreatorPage] collection clicked:', collectionId);
-    Taro.showToast({
-      title: '合集管理',
-      icon: 'none',
+    Taro.navigateTo({
+      url: `/pages/collection-manage/index?id=${collectionId}`,
     });
   };
 

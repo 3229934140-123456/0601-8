@@ -1,0 +1,230 @@
+@use '@/styles/variables.scss' as *;
+
+.chatPage {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: $color-bg-page;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 88rpx;
+  padding: 0 24rpx;
+  background: $color-bg-white;
+  border-bottom: 1rpx solid $color-border-light;
+}
+
+.backBtn, .moreBtn {
+  width: 56rpx;
+  height: 56rpx;
+  font-size: 36rpx;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.avatar {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: $radius-round;
+}
+
+.nickname {
+  font-size: 32rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.messageList {
+  flex: 1;
+  padding: 24rpx;
+}
+
+.messageItem {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 32rpx;
+  gap: 16rpx;
+}
+
+.messageItem.other {
+  justify-content: flex-start;
+}
+
+.messageItem.mine {
+  justify-content: flex-end;
+}
+
+.msgAvatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-round;
+  flex-shrink: 0;
+}
+
+.msgAvatarPlaceholder {
+  width: 72rpx;
+  flex-shrink: 0;
+}
+
+.msgBubble {
+  max-width: 70%;
+  padding: 20rpx 24rpx;
+  border-radius: $radius-lg;
+  word-break: break-word;
+}
+
+.other .msgBubble {
+  background: $color-bg-white;
+  border-top-left-radius: 8rpx;
+}
+
+.mine .msgBubble {
+  background: linear-gradient(135deg, $color-primary, lighten($color-primary, 10%));
+  border-top-right-radius: 8rpx;
+}
+
+.msgText {
+  font-size: 28rpx;
+  line-height: 1.5;
+}
+
+.other .msgText {
+  color: $color-text-primary;
+}
+
+.mine .msgText {
+  color: $color-text-white;
+}
+
+.bookingCard {
+  background: $color-bg-white;
+  border-radius: $radius-lg;
+  padding: 24rpx;
+  margin-bottom: 32rpx;
+  border: 2rpx solid rgba(255, 46, 99, 0.2);
+}
+
+.bookingTitle {
+  font-size: 30rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.bookingRow {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12rpx;
+}
+
+.bookingLabel {
+  width: 100rpx;
+  font-size: 26rpx;
+  color: $color-text-tertiary;
+  flex-shrink: 0;
+}
+
+.bookingValue {
+  flex: 1;
+  font-size: 26rpx;
+  color: $color-text-primary;
+}
+
+.bookingActions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 24rpx;
+}
+
+.bookingBtn {
+  flex: 1;
+  height: 72rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: $font-weight-semibold;
+
+  &.reject {
+    background: $color-bg-gray;
+    color: $color-text-secondary;
+  }
+
+  &.accept {
+    background: $color-primary;
+    color: $color-text-white;
+  }
+}
+
+.bookingStatus {
+  margin-top: 20rpx;
+  padding: 16rpx;
+  border-radius: $radius-md;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: $font-weight-medium;
+
+  &.accepted {
+    background: rgba(26, 188, 156, 0.1);
+    color: $color-success;
+  }
+
+  &.rejected {
+    background: rgba(255, 71, 87, 0.1);
+    color: $color-error;
+  }
+}
+
+.inputBar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx 24rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  background: $color-bg-white;
+  border-top: 1rpx solid $color-border-light;
+}
+
+.input {
+  flex: 1;
+  height: 72rpx;
+  background: $color-bg-gray;
+  border-radius: $radius-round;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: $color-text-primary;
+}
+
+.sendBtn {
+  height: 72rpx;
+  padding: 0 32rpx;
+  background: $color-primary;
+  border-radius: $radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-white;
+
+  &.disabled {
+    background: $color-bg-gray;
+    color: $color-text-tertiary;
+  }
+}

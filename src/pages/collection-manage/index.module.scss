@@ -1,0 +1,170 @@
+@use '@/styles/variables.scss' as *;
+
+.collectionPage {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: $color-bg-page;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 88rpx;
+  padding: 0 24rpx;
+  background: $color-bg-white;
+  border-bottom: 1rpx solid $color-border-light;
+}
+
+.backBtn {
+  width: 56rpx;
+  height: 56rpx;
+  font-size: 36rpx;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 34rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.manageBtn {
+  font-size: 28rpx;
+  color: $color-primary;
+}
+
+.content {
+  flex: 1;
+  padding: 24rpx;
+}
+
+.collectionItem {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  background: $color-bg-white;
+  border-radius: $radius-lg;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.collectionItem.managing {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16rpx;
+}
+
+.collectionCover {
+  width: 180rpx;
+  height: 135rpx;
+  border-radius: $radius-md;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.collectionItem.managing .collectionCover {
+  width: 100%;
+  height: 240rpx;
+}
+
+.coverImage {
+  width: 100%;
+  height: 100%;
+}
+
+.topTag {
+  position: absolute;
+  top: 8rpx;
+  left: 8rpx;
+  padding: 6rpx 16rpx;
+  background: linear-gradient(135deg, $color-primary, $color-secondary);
+  border-radius: $radius-sm;
+  font-size: 20rpx;
+  color: $color-text-white;
+  font-weight: $font-weight-semibold;
+}
+
+.collectionInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.collectionTitle {
+  font-size: 30rpx;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.collectionMeta {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 24rpx;
+  color: $color-text-tertiary;
+}
+
+.arrowIcon {
+  font-size: 40rpx;
+  color: $color-text-tertiary;
+  flex-shrink: 0;
+}
+
+.manageActions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.actionBtn {
+  flex: 1;
+  height: 64rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  background: $color-bg-gray;
+  color: $color-text-secondary;
+
+  &.active {
+    background: rgba(255, 46, 99, 0.1);
+    color: $color-primary;
+  }
+
+  &.delete {
+    background: rgba(255, 71, 87, 0.1);
+    color: $color-error;
+  }
+}
+
+.createBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  height: 96rpx;
+  background: $color-bg-white;
+  border-radius: $radius-lg;
+  border: 2rpx dashed $color-border-light;
+  margin-top: 12rpx;
+}
+
+.createIcon {
+  font-size: 36rpx;
+  color: $color-primary;
+}
+
+.createText {
+  font-size: 28rpx;
+  color: $color-text-secondary;
+}

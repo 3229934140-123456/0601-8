@@ -1,0 +1,279 @@
+import React, { useState } from 'react';
+import { View, Text, Textarea, Input, Image, ScrollView, Button } from '@tarojs/components';
+import Taro from '@tarojs/taro';
+import classnames from 'classnames';
+import styles from './index.module.scss';
+import { mockShops, mockChallenges, mockVideos } from '@/data/index';
+import { Shop, Challenge, Video } from '@/types';
+
+const PublishSettingPage: React.FC = () => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
+  const [selectedChallenges, setSelectedChallenges] = useState<Challenge[]>([]);
+  const [showShopPicker, setShowShopPicker] = useState(false);
+  const [showChallengePicker, setShowChallengePicker] = useState(false);
+  const [saveDraft, setSaveDraft] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [videos, setVideos] = useState<Video[]>(mockVideos);
+
+  const handleTitleInput = (e) => {
+    setTitle(e.detail.value);
+  };
+
+  const handleDescInput = (e) => {
+    setDescription(e.detail.value);
+  };
+
+  const handleShopSelect = (shop: Shop) => {
+    setSelectedShop(shop);
+    setShowShopPicker(false);
+  };
+
+  const toggleChallenge = (challenge: Challenge) => {
+    const exists = selectedChallenges.find(c => c.id === challenge.id);
+    if (exists) {
+      setSelectedChallenges(selectedChallenges.filter(c => c.id !== challenge.id));
+    } else {
+      if (selectedChallenges.length < 3) {
+        setSelectedChallenges([...selectedChallenges, challenge]);
+      } else {
+        Taro.showToast({
+          title: '最多选择3个话题',
+          icon: 'none',
+        });
+      }
+    }
+  };
+
+  const handlePublish = () => {
+    if (!title.trim()) {
+      Taro.showToast({
+        title: '请填写标题',
+        icon: 'none',
+      });
+      return;
+    }
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    const newVideo: Video = {
+      id: 'v_new_' + Date.now(),
+      title: title,
+      description: description,
+      coverUrl: 'https://picsum.photos/id/237/400/700',
+      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      author: {
+        id: 'u0',
+        nickname: '探店达人小明',
+        avatar: 'https://picsum.photos/id/64/200/200',
+        isVerified: true,
+        followersCount: 12000,
+        followingCount: 100,
+        worksCount: 50,
+      },
+      likesCount: 0,
+      commentsCount: 0,
+      sharesCount: 0,
+      collectCount: 0,
+      viewsCount: 0,
+      duration: 15,
+      shop: selectedShop,
+      challenge: selectedChallenges[0] || null,
+      tags: selectedChallenges.map(c => c.name),
+      createdAt: new Date().toISOString().split('T')[0],
+      isLiked: false,
+      isCollected: false,
+      isFollowed: false,
+    };
+
+    console.log('[Publish] new video:', newVideo);
+
+    if (saveDraft) {
+      Taro.showToast({
+        title: '已保存到草稿箱',
+        icon: 'success',
+      });
+      console.log('[Publish] saved as draft');
+    } else {
+      setVideos([newVideo, ...videos]);
+      Taro.showToast({
+        title: '发布成功',
+        icon: 'success',
+      });
+      console.log('[Publish] video published');
+    }
+
+    setTimeout(() => {
+      setIsSubmitting(false);
+      Taro.switchTab({ url: '/pages/home/index' });
+    }, 1500);
+  };
+
+  const handleSaveDraftToggle = () => {
+    setSaveDraft(!saveDraft);
+  };
+
+  return (
+    <View className={styles.publishPage}>
+      <View className={styles.header}>
+        <Button className={styles.backBtn} onClick={() => Taro.navigateBack()}>
+          <Text>←</Text>
+        </Button>
+        <Text className={styles.title}>发布设置</Text>
+        <View className={styles.placeholder} />
+      </View>
+
+      <ScrollView className={styles.content} scrollY enhanced>
+        <View className={styles.section}>
+          <Text className={styles.sectionTitle}>视频标题</Text>
+          <Textarea
+            className={styles.titleInput}
+            placeholder="写个吸引人的标题吧～"
+            value={title}
+            onInput={handleTitleInput}
+            maxlength={50}
+            autoHeight
+          />
+          <Text className={styles.charCount}>{title.length}/50</Text>
+        </View>
+
+        <View className={styles.section}>
+          <Text className={styles.sectionTitle}>视频描述</Text>
+          <Textarea
+            className={styles.descInput}
+            placeholder="介绍一下视频内容、店铺亮点..."
+            value={description}
+            onInput={handleDescInput}
+            maxlength={300}
+            autoHeight
+          />
+          <Text className={styles.charCount}>{description.length}/300</Text>
+        </View>
+
+        <View className={styles.section} onClick={() => setShowShopPicker(true)}>
+          <View className={styles.sectionHeader}>
+            <Text className={styles.sectionTitle}>门店定位</Text>
+            <View className={styles.arrowIcon}><Text>›</Text></View>
+          </View>
+          {selectedShop ? (
+            <View className={styles.selectedShop}>
+              <Image className={styles.shopCover} src={selectedShop.coverUrl} mode="aspectFill" />
+              <View className={styles.shopInfo}>
+                <Text className={styles.shopName}>{selectedShop.name}</Text>
+                <Text className={styles.shopAddr}>📍 {selectedShop.address}</Text>
+              </View>
+              <Text className={styles.changeBtn}>更换</Text>
+            </View>
+          ) : (
+            <View className={styles.placeholderRow}>
+              <Text className={styles.placeholderText}>选择门店位置，让附近用户看到你的视频</Text>
+            </View>
+          )}
+        </View>
+
+        <View className={styles.section} onClick={() => setShowChallengePicker(true)}>
+          <View className={styles.sectionHeader}>
+            <Text className={styles.sectionTitle}>话题挑战</Text>
+            <View className={styles.arrowIcon}><Text>›</Text></View>
+          </View>
+          {selectedChallenges.length > 0 ? (
+            <View className={styles.challengeList}>
+              {selectedChallenges.map((c) => (
+                <View key={c.id} className={styles.challengeTag}>
+                  <Text>🏆 {c.tag}</Text>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <View className={styles.placeholderRow}>
+              <Text className={styles.placeholderText}>添加话题，获得更多曝光</Text>
+            </View>
+          )}
+        </View>
+
+        <View className={styles.section}>
+          <View className={styles.sectionHeader} onClick={handleSaveDraftToggle}>
+            <Text className={styles.sectionTitle}>保存为草稿</Text>
+            <View className={classnames(styles.toggleSwitch, saveDraft && styles.on)}>
+              <View className={styles.toggleDot} />
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+
+      <View className={styles.footer}>
+        <View
+          className={classnames(styles.publishBtn, isSubmitting && styles.disabled)}
+          onClick={handlePublish}
+        >
+          <Text>{isSubmitting ? '发布中...' : (saveDraft ? '保存草稿' : '发布')}</Text>
+        </View>
+      </View>
+
+      {showShopPicker && (
+        <View className={styles.pickerModal} onClick={() => setShowShopPicker(false)}>
+          <View className={styles.pickerContent} onClick={(e) => e.stopPropagation()}>
+            <Text className={styles.pickerTitle}>选择门店</Text>
+            <ScrollView scrollY style={{ maxHeight: '600rpx' }} enhanced showScrollbar={false}>
+              {mockShops.map((shop) => (
+                <View
+                  key={shop.id}
+                  className={classnames(
+                    styles.shopPickerItem,
+                    selectedShop?.id === shop.id && styles.selected
+                  )}
+                  onClick={() => handleShopSelect(shop)}
+                >
+                  <Image className={styles.shopPickerCover} src={shop.coverUrl} mode="aspectFill" />
+                  <View className={styles.shopPickerInfo}>
+                    <Text className={styles.shopPickerName}>{shop.name}</Text>
+                    <Text className={styles.shopPickerAddr}>📍 {shop.address}</Text>
+                    <Text className={styles.shopPickerDistance}>{shop.distance}km</Text>
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
+            <View className={styles.pickerCancel} onClick={() => setShowShopPicker(false)}>
+              <Text>取消</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {showChallengePicker && (
+        <View className={styles.pickerModal} onClick={() => setShowChallengePicker(false)}>
+          <View className={styles.pickerContent} onClick={(e) => e.stopPropagation()}>
+            <Text className={styles.pickerTitle}>选择话题挑战</Text>
+            <ScrollView scrollY style={{ maxHeight: '600rpx' }} enhanced showScrollbar={false}>
+              {mockChallenges.map((challenge) => (
+                <View
+                  key={challenge.id}
+                  className={classnames(
+                    styles.challengePickerItem,
+                    selectedChallenges.find(c => c.id === challenge.id) && styles.selected
+                  )}
+                  onClick={() => toggleChallenge(challenge)}
+                >
+                  <View className={styles.challengePickerInfo}>
+                    <Text className={styles.challengePickerName}>🏆 {challenge.tag}</Text>
+                    <Text className={styles.challengePickerDesc}>{challenge.participantsCount.toLocaleString()}人参与</Text>
+                  </View>
+                  {selectedChallenges.find(c => c.id === challenge.id) && (
+                    <Text className={styles.checkIcon}>✓</Text>
+                  )}
+                </View>
+              ))}
+            </ScrollView>
+            <View className={styles.pickerCancel} onClick={() => setShowChallengePicker(false)}>
+              <Text>确定</Text>
+            </View>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+};
+
+export default PublishSettingPage;

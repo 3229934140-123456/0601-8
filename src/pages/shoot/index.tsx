@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, Image, Button, ScrollView } from '@tarojs/components';
+import { View, Text, Image, Button, ScrollView, Input } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
+import { Subtitle, Sticker } from '@/types';
 
 const shootModes = ['拍视频', '模板', '直播'];
 const tools = [
@@ -21,13 +22,30 @@ const templates = [
   { id: 4, name: '夜景街拍', cover: 'https://picsum.photos/id/431/200/240' },
 ];
 
+const stickerOptions = [
+  { id: 's1', emoji: '🔥', name: '火' },
+  { id: 's2', emoji: '💖', name: '爱心' },
+  { id: 's3', emoji: '⭐', name: '星星' },
+  { id: 's4', emoji: '🎉', name: '庆祝' },
+  { id: 's5', emoji: '🍜', name: '美食' },
+  { id: 's6', emoji: '☕', name: '咖啡' },
+  { id: 's7', emoji: '📍', name: '定位' },
+  { id: 's8', emoji: '🏆', name: '奖杯' },
+];
+
 const ShootPage: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [activeMode, setActiveMode] = useState('拍视频');
   const [recordingTime, setRecordingTime] = useState(0);
   const [segments, setSegments] = useState<number[]>([]);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [showStickerPanel, setShowStickerPanel] = useState(false);
+  const [showSubtitlePanel, setShowSubtitlePanel] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
+  const [subtitles, setSubtitles] = useState<Subtitle[]>([]);
+  const [stickers, setStickers] = useState<Sticker[]>([]);
+  const [editingSubtitle, setEditingSubtitle] = useState<string | null>(null);
+  const [subtitleText, setSubtitleText] = useState('');
   const timerRef = useRef<number | null>(null);
 
   const formatTime = (seconds: number): string => {
@@ -71,6 +89,12 @@ const ShootPage: React.FC = () => {
     console.log('[ShootPage] tool clicked:', toolId);
     if (toolId === 'template') {
       setShowTemplateModal(true);
+    } else if (toolId === 'text') {
+      setShowSubtitlePanel(true);
+      setShowStickerPanel(false);
+    } else if (toolId === 'sticker') {
+      setShowStickerPanel(true);
+      setShowSubtitlePanel(false);
     } else {
       Taro.showToast({
         title: `${toolId}功能开发中`,
@@ -99,6 +123,10 @@ const ShootPage: React.FC = () => {
     const newSegments = segments.filter((_, i) => i !== index);
     setSegments(newSegments);
     console.log('[ShootPage] segment deleted:', index);
+    Taro.showToast({
+      title: '已删除分段',
+      icon: 'none',
+    });
   };
 
   const handleNextStep = () => {
@@ -109,20 +137,9 @@ const ShootPage: React.FC = () => {
       });
       return;
     }
-    console.log('[ShootPage] go to publish step');
-    Taro.showModal({
-      title: '发布设置',
-      content: '请添加标题、定位和话题',
-      confirmText: '去发布',
-      confirmColor: '#FF2E63',
-      success: (res) => {
-        if (res.confirm) {
-          Taro.showToast({
-            title: '发布功能开发中',
-            icon: 'none',
-          });
-        }
-      },
+    console.log('[ShootPage] go to publish setting');
+    Taro.navigateTo({
+      url: '/pages/publish-setting/index',
     });
   };
 
@@ -150,9 +167,64 @@ const ShootPage: React.FC = () => {
     setActiveMode('拍视频');
   };
 
+  const handleAddSubtitle = () => {
+    const newSubtitle: Subtitle = {
+      id: 'sub_' + Date.now(),
+      text: subtitleText || '点击编辑文字',
+      startTime: 0,
+      endTime: 5,
+      x: 50,
+      y: 70,
+      fontSize: 32,
+      color: '#ffffff',
+    };
+    setSubtitles([...subtitles, newSubtitle]);
+    setSubtitleText('');
+    setShowSubtitlePanel(false);
+    console.log('[ShootPage] subtitle added:', newSubtitle);
+  };
+
+  const handleSubtitleInput = (e) => {
+    setSubtitleText(e.detail.value);
+  };
+
+  const handleDeleteSubtitle = (id: string) => {
+    setSubtitles(subtitles.filter(s => s.id !== id));
+    console.log('[ShootPage] subtitle deleted:', id);
+  };
+
+  const handleEditSubtitle = (id: string, text: string) => {
+    setSubtitles(subtitles.map(s =>
+      s.id === id ? { ...s, text } : s
+    ));
+  };
+
+  const handleAddSticker = (stickerOpt: typeof stickerOptions[0]) => {
+    const newSticker: Sticker = {
+      id: 'stk_' + Date.now(),
+      emoji: stickerOpt.emoji,
+      x: 50,
+      y: 50,
+      scale: 1,
+    };
+    setStickers([...stickers, newSticker]);
+    setShowStickerPanel(false);
+    console.log('[ShootPage] sticker added:', newSticker);
+  };
+
+  const handleDeleteSticker = (id: string) => {
+    setStickers(stickers.filter(s => s.id !== id));
+    console.log('[ShootPage] sticker deleted:', id);
+  };
+
+  const closePanels = () => {
+    setShowSubtitlePanel(false);
+    setShowStickerPanel(false);
+  };
+
   return (
     <View className={styles.shootPage}>
-      <View className={styles.previewArea}>
+      <View className={styles.previewArea} onClick={closePanels}>
         <View className={styles.topBar}>
           <Button
             className={styles.closeBtn}
@@ -188,6 +260,67 @@ const ShootPage: React.FC = () => {
         <View className={styles.previewPlaceholder}>
           <Text className={styles.previewIcon}>📹</Text>
           <Text className={styles.previewText}>点击拍摄按钮开始录制</Text>
+
+          {subtitles.map((sub) => (
+            <View
+              key={sub.id}
+              className={styles.subtitleItem}
+              style={{
+                top: `${sub.y}%`,
+                left: `${sub.x}%`,
+                fontSize: `${sub.fontSize}rpx`,
+                color: sub.color,
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setEditingSubtitle(sub.id);
+              }}
+            >
+              {editingSubtitle === sub.id ? (
+                <Input
+                  className={styles.subtitleInput}
+                  value={sub.text}
+                  onInput={(e) => handleEditSubtitle(sub.id, e.detail.value)}
+                  onBlur={() => setEditingSubtitle(null)}
+                  autoFocus
+                />
+              ) : (
+                <Text>{sub.text}</Text>
+              )}
+              <View
+                className={styles.deleteSubBtn}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteSubtitle(sub.id);
+                }}
+              >
+                <Text>×</Text>
+              </View>
+            </View>
+          ))}
+
+          {stickers.map((stk) => (
+            <View
+              key={stk.id}
+              className={styles.stickerItem}
+              style={{
+                top: `${stk.y}%`,
+                left: `${stk.x}%`,
+                transform: `scale(${stk.scale})`,
+              }}
+            >
+              <Text className={styles.stickerEmoji}>{stk.emoji}</Text>
+              <View
+                className={styles.deleteSubBtn}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteSticker(stk.id);
+                }}
+              >
+                <Text>×</Text>
+              </View>
+            </View>
+          ))}
         </View>
       </View>
 
@@ -200,15 +333,72 @@ const ShootPage: React.FC = () => {
                 className={classnames(styles.segmentItem, styles.active)}
                 style={{ background: `linear-gradient(135deg, #FF2E63 ${duration * 2}%, #FF6B9D 100%)` }}
               >
+                <Text className={styles.segmentNum}>{index + 1}</Text>
                 <View className={styles.segmentDelete} onClick={() => handleDeleteSegment(index)}>
                   <Text>×</Text>
                 </View>
               </View>
             ))}
-            <View className={classnames(styles.segmentItem, styles.add)}>
+            <View
+              className={classnames(styles.segmentItem, styles.add)}
+              onClick={handleShootClick}
+            >
               <Text>+</Text>
             </View>
           </ScrollView>
+        )}
+
+        {showSubtitlePanel && (
+          <View className={styles.toolPanel}>
+            <Text className={styles.panelTitle}>添加字幕</Text>
+            <Input
+              className={styles.subtitleInputBox}
+              placeholder="输入字幕文字..."
+              value={subtitleText}
+              onInput={handleSubtitleInput}
+              maxlength={30}
+            />
+            <View className={styles.panelActions}>
+              <View
+                className={classnames(styles.panelBtn, styles.cancel)}
+                onClick={() => setShowSubtitlePanel(false)}
+              >
+                <Text>取消</Text>
+              </View>
+              <View
+                className={classnames(styles.panelBtn, styles.confirm)}
+                onClick={handleAddSubtitle}
+              >
+                <Text>添加</Text>
+              </View>
+            </View>
+          </View>
+        )}
+
+        {showStickerPanel && (
+          <View className={styles.toolPanel}>
+            <Text className={styles.panelTitle}>选择贴纸</Text>
+            <View className={styles.stickerGrid}>
+              {stickerOptions.map((opt) => (
+                <View
+                  key={opt.id}
+                  className={styles.stickerOption}
+                  onClick={() => handleAddSticker(opt)}
+                >
+                  <Text className={styles.stickerOptionEmoji}>{opt.emoji}</Text>
+                  <Text className={styles.stickerOptionName}>{opt.name}</Text>
+                </View>
+              ))}
+            </View>
+            <View className={styles.panelActions}>
+              <View
+                className={classnames(styles.panelBtn, styles.cancel)}
+                onClick={() => setShowStickerPanel(false)}
+              >
+                <Text>关闭</Text>
+              </View>
+            </View>
+          </View>
         )}
 
         <View className={styles.toolsRow}>

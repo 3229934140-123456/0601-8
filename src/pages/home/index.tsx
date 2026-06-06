@@ -67,9 +67,9 @@ const HomePage: React.FC = () => {
         indicatorDots={false}
         duration={300}
       >
-        {videos.map((video) => (
+        {videos.map((video, index) => (
           <SwiperItem key={video.id} className={styles.swiperItem}>
-            <VideoCard video={video} showTopBar={currentIndex === videos.indexOf(video)} />
+            <VideoCard video={video} showTopBar={index === currentIndex} isActive={index === currentIndex} />
           </SwiperItem>
         ))}
       </Swiper>
